@@ -1,0 +1,51 @@
+{
+  "name": "web3-pay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-ui": "webpack-dev-server --config webpack.ui.config.js --hot --inline",
+    "dev": "NODE_ENV=development concurrently --kill-others-on-fail npm:watch-server npm:dev-server npm:dev-ui",
+    "dev-server": "nodemon ./build/server.js",
+    "watch-server": "webpack --config webpack.server.config.js --inline --watch",
+    "build-server": "webpack --config webpack.server.config.js",
+    "build-ui": " webpack --config webpack.ui.config.js",
+    "build": "npm run build-ui && npm run build-server",
+    "start": "NODE_ENV=productionnpm run build && node ./build/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.3",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
+    "concurrently": "^5.1.0",
+    "copy-webpack-plugin": "^5.0.5",
+    "css-loader": "^3.2.1",
+    "eslint": "^5.16.0",
+    "file-loader": "^5.0.2",
+    "html-webpack-plugin": "^3.2.0",
+    "image-webpack-loader": "^6.0.0",
+    "node-loader": "^0.6.0",
+    "node-sass": "^4.13.0",
+    "nodemon": "^2.0.2",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
