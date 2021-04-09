@@ -29,6 +29,7 @@
     "@types/node": "^14.14.37",
     "@types/react-dom": "^17.0.3",
     "@types/react-router-dom": "^5.1.7",
+    "@types/redux-logger": "^3.0.8",
     "concurrently": "^5.1.0",
     "copy-webpack-plugin": "^5.0.5",
     "css-loader": "^3.2.1",
