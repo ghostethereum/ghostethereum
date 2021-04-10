@@ -1,0 +1,24 @@
+{
+  "production": {
+    "web3HTTPProvider": "",
+    "web3WSSProvider": "",
+    "subscriptionContractAddress": "",
+    "dbHost": "",
+    "dbDialect": "",
+    "dbStorage": "",
+    "dbName": "",
+    "dbUsername": "",
+    "dbPassword": ""
+  },
+  "development": {
+    "web3HTTPProvider": "",
+    "web3WSSProvider": "",
+    "subscriptionContractAddress":  "",
+    "dbHost": "",
+    "dbDialect": "",
+    "dbStorage": "",
+    "dbName":  "",
+    "dbUsername":  "",
+    "dbPassword":  ""
+  }
+}

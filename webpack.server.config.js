@@ -68,7 +68,7 @@ module.exports = [
             ],
         },
         output: {
-            path: __dirname + '/build',
+            path: __dirname + '/build-server',
             filename: `server.js`,
         },
         plugins: [

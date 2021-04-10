@@ -77,7 +77,7 @@ module.exports = [
             ],
         },
         output: {
-            path: __dirname + '/build',
+            path: __dirname + '/build-ui',
             publicPath: isProd ? '/' : 'http://localhost:8080/',
             filename: `app.js`,
         },
