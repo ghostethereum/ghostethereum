@@ -2,8 +2,11 @@ import {GenericService} from "../util/svc";
 import {Sequelize} from 'sequelize';
 import config from "../util/config";
 import blockchain from "../models/blockchain";
-import subscription from "../models/subscription";
-import settlement from "../models/settlement";
+import subscription, {
+    Subscription as SubscriptionType,
+} from "../models/subscription";
+import settlement, {Settlement} from "../models/settlement";
+import {Subscription} from "web3-core-subscriptions";
 
 export default class DBService extends GenericService {
     sequelize: Sequelize;
@@ -32,6 +35,18 @@ export default class DBService extends GenericService {
         }
     }
 
+    async addSubscription(data: SubscriptionType) {
+        return this.subscription?.addSubscription(data);
+    }
+
+    async cancelSubscription(id: string) {
+        return this.subscription?.cancelSubscription(id);
+    }
+
+    async addOrUpdateSettlement(data: Settlement) {
+        return this.settlement?.addOrUpdateSettlement(data);
+    }
+
     async start() {
         this.blockchain = await blockchain(this.sequelize);
         this.subscription = await subscription(this.sequelize);
@@ -41,7 +56,7 @@ export default class DBService extends GenericService {
         this.settlement?.model.belongsTo(this.subscription?.model);
 
         this.blockchain?.model.sync();
-        this.subscription?.model.sync();
-        this.settlement?.model.sync();
+        this.subscription?.model.sync({ force: true });
+        this.settlement?.model.sync({ force: true });
     }
 }

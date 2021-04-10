@@ -1,5 +1,17 @@
 import {Sequelize, Model, BIGINT, STRING, BOOLEAN} from "sequelize";
 
+export type Subscription = {
+    id: string;
+    txHash: string;
+    blockHeight: number;
+    ownerAddress: string;
+    subscriberAddress: string;
+    tokenAddress: string;
+    value: number;
+    interval: number;
+    cancelled: boolean;
+};
+
 const subscription = (sequelize: Sequelize) => {
     const model = sequelize.define('subscription', {
         id: {
@@ -10,6 +22,21 @@ const subscription = (sequelize: Sequelize) => {
                 notEmpty: true,
             },
             primaryKey: true,
+        },
+        txHash: {
+            type: STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+            },
+        },
+        blockHeight: {
+            type: BIGINT,
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+                min: 1,
+            },
         },
         ownerAddress: {
             type: STRING,
@@ -65,8 +92,52 @@ const subscription = (sequelize: Sequelize) => {
         ],
     });
 
+    const addSubscription = async (data: Subscription) => {
+        const result = await model.findOne({
+            where: { id: data.id },
+        });
+
+        if (!result) {
+            return await model.create({
+                id: data.id,
+                txHash: data.txHash,
+                blockHeight: data.blockHeight,
+                ownerAddress: data.ownerAddress,
+                subscriberAddress: data.subscriberAddress,
+                tokenAddress: data.tokenAddress,
+                value: data.value,
+                interval: data.interval,
+                cancelled: false,
+            });
+        }
+
+        return await result.update({
+            txHash: data.txHash,
+            blockHeight: data.blockHeight,
+            value: data.value,
+            interval: data.interval,
+            cancelled: false,
+        });
+    }
+
+    const cancelSubscription = async (id: string) => {
+        const result = await model.findOne({
+            where: { id },
+        });
+
+        if (!result) {
+            return Promise.reject(`cannot find subscription id - ${id}`);
+        }
+
+        return result.update({
+            cancelled: true,
+        });
+    }
+
     return {
         model,
+        addSubscription,
+        cancelSubscription,
     };
 }
 
