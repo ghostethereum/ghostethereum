@@ -21,24 +21,30 @@ export default class IndexerService extends GenericService {
         );
     }
 
-    async getPastLogs(fromBlock: number) {
-        const events = await this.subscriptionContract.getPastEvents('SubscriptionAdded', {
+    async subscribeEvents(fromBlock: number) {
+        this.subscriptionContract.events.allEvents({
             address: config.subscriptionContractAddress,
             fromBlock,
             toBlock: 'latest',
-        });
-    }
-
-    async subscribeEvents() {
-        this.subscribed = this.web3.eth.subscribe('logs', {
-            address: config.subscriptionContractAddress,
-        }, (error, result) => {
-            console.log({result});
+        }, (error: any, event: any) => {
+            switch (event.event) {
+                case "SettlementSuccess":
+                    console.log(event.event, event.returnValues);
+                    return;
+                case "SettlementFailure":
+                    console.log(event.event, event.returnValues);
+                    return;
+                case "SubscriptionAdded":
+                    console.log(event.event, event.returnValues);
+                    return;
+                case "SubscriptionRemoved":
+                    console.log(event.event, event.returnValues);
+                    return;
+            }
         });
     }
 
     async start() {
-        // wait this.subscribeEvents();
-        // await this.getPastLogs(8381397);
+        await this.subscribeEvents(8381397);
     }
 }
