@@ -5,6 +5,7 @@ import {Redirect, Route, Switch} from "react-router";
 import Button from "../../components/Button";
 import {useAccount, useWeb3} from "../../ducks/web3";
 import Web3Modal from "../../components/Web3Modal";
+import Web3ConnectButton from "../../components/Web3ConnectButton";
 
 export default function Index(): ReactElement {
     const web3 = useWeb3();
@@ -23,14 +24,8 @@ function UnauthContent(): ReactElement {
     return (
         <div className="content">
             <div className="content__unauthenticated">
-                <Button
-                    btnType="secondary"
-                    onClick={() => setShowingModal(true)}
-                >
-                    Connect to a wallet
-                </Button>
+                <Web3ConnectButton />
             </div>
-            { isShowingModal && <Web3Modal onClose={() => setShowingModal(false)} />}
         </div>
     )
 }

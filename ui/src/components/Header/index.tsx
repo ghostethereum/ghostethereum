@@ -1,10 +1,8 @@
 import React, {ReactElement, useState} from "react";
 import "./header.scss";
-import Button from "../Button";
-import Web3Modal from "../Web3Modal";
+import Web3ConnectButton from "../Web3ConnectButton";
 
 export default function Header(): ReactElement {
-    const [isShowingModal, setShowingModal] = useState(false);
 
     return (
         <>
@@ -12,16 +10,10 @@ export default function Header(): ReactElement {
                 <div className="header__body">
                     <div className="header__logo">Web3Pay</div>
                     <div className="header__content">
-                        <Button
-                            btnType="secondary"
-                            onClick={() => setShowingModal(true)}
-                        >
-                            Connect to a wallet
-                        </Button>
+                        <Web3ConnectButton />
                     </div>
                 </div>
             </div>
-            { isShowingModal && <Web3Modal onClose={() => setShowingModal(false)} />}
         </>
     )
 }

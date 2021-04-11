@@ -24,7 +24,7 @@ const initialState: State = {
     account: '',
 };
 
-export const setWeb3 = (web3: Web3, account: string) => ({
+export const setWeb3 = (web3: Web3 | null, account: string) => ({
     type: ActionTypes.SET_WEB3,
     payload: {
         web3,

@@ -1,0 +1,12 @@
+@import "../../util/variables";
+
+.web3-connect-button {
+  &--connected {
+    align-items: center;
+    padding: .625rem 1rem !important;
+  }
+
+  .identicon {
+    margin-right: .5rem;
+  }
+}
