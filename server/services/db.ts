@@ -6,7 +6,7 @@ import subscription, {
     Subscription as SubscriptionType,
 } from "../models/subscription";
 import settlement, {Settlement} from "../models/settlement";
-import owner, {Owner} from "../models/owner";
+import owner from "../models/owner";
 import plan from "../models/plan";
 
 export default class DBService extends GenericService {
@@ -33,7 +33,7 @@ export default class DBService extends GenericService {
                 {
                     host: config.dbHost,
                     dialect: config.dbDialect,
-                }
+                },
             );
         }
     }

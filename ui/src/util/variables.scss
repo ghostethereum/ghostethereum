@@ -1,0 +1,31 @@
+$black: #000;
+$border-gray: rgba($black, .1);
+$secondary-gray: #efefef;
+$white: #fff;
+$primary-blue: #0043ff;
+$error-red: #ff4f33;
+
+%col-nowrap {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+%row-nowrap {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+%h1 {
+  font-size: 2rem;
+  line-height: 1.3125;
+}
+
+%h4 {
+  font-size: 1rem;
+  line-height: 1.3125;
+}
+
+%regular-font {
+  font-size: 1rem;
+  line-height: 1.3125;
+}

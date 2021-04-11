@@ -10,6 +10,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes",
+        "name": "uuid",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -29,6 +35,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes",
+        "name": "uuid",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -44,6 +56,12 @@
         "indexed": false,
         "internalType": "bytes",
         "name": "id",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "uuid",
         "type": "bytes"
       },
       {
@@ -69,6 +87,12 @@
         "indexed": false,
         "internalType": "bytes",
         "name": "id",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "uuid",
         "type": "bytes"
       }
     ],
@@ -229,6 +253,11 @@
         "type": "bytes"
       },
       {
+        "internalType": "bytes",
+        "name": "uuid",
+        "type": "bytes"
+      },
+      {
         "internalType": "address",
         "name": "ownerAddress",
         "type": "address"
@@ -350,6 +379,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "bytes",
+        "name": "uuid",
+        "type": "bytes"
+      },
+      {
         "internalType": "bool",
         "name": "skipFirstPayment",
         "type": "bool"
@@ -362,6 +396,11 @@
           {
             "internalType": "bytes",
             "name": "id",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes",
+            "name": "uuid",
             "type": "bytes"
           },
           {

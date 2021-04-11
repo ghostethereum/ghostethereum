@@ -1,0 +1,52 @@
+@import "../../util/variables";
+
+.button {
+  @extend %row-nowrap;
+  @extend %regular-font;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border: 1px solid $border-gray;
+  border-radius: 4px;
+  outline: none;
+  background-color: $secondary-gray;
+  transition: background-color 150ms ease-in-out;
+  color: $black;
+
+  &:hover {
+    background-color: lighten($secondary-gray, 2.5);
+  }
+
+  &:active {
+    background-color: darken($secondary-gray, 2.5);
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px rgba($black, .1);
+  }
+}
+
+.button--primary {
+  background-color: $black;
+  color: $white;
+
+  &:hover {
+    background-color: lighten($black, 15);
+  }
+
+  &:active {
+    background-color: $black;
+  }
+}
+
+.button--secondary {
+  background-color: $white;
+  color: $black;
+
+  &:hover {
+    background-color: darken($white, 2.5);
+  }
+
+  &:active {
+    background-color: $white;
+  }
+}

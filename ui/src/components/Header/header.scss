@@ -1,0 +1,30 @@
+@import "../../util/variables";
+
+.header {
+  @extend %row-nowrap;
+  height: 5rem;
+  border-bottom: 1px solid $border-gray;
+  align-items: center;
+  justify-content: center;
+
+  &__body {
+    @extend %row-nowrap;
+    align-items: center;
+    flex: 1 1 auto;
+    max-width: 72rem;
+    padding: 0 1rem;
+  }
+
+  &__logo {
+    @extend %h1;
+    font-family: "Zilla Slab Highlight", cursive;
+    cursor: default;
+    font-weight: 600;
+  }
+
+  &__content {
+    @extend %row-nowrap;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+  }
+}

@@ -1,5 +1,5 @@
 import {GenericService} from "../util/svc";
-import express, {Express} from "express";
+import express, {Express, Request, Response} from "express";
 import cors, {CorsOptions} from "cors";
 const port = process.env.PORT || 11664;
 
@@ -28,9 +28,32 @@ export default class HttpService extends GenericService {
         this.app.use(cors(corsOptions));
     }
 
+    wrapHandler(handler: (req: Request, res: Response) => Promise<void>) {
+        return async (req: Request, res: Response) => {
+            await handler(req, res);
+        }
+    }
+
+    addRoutes() {
+        this.app.get('/vendors/:address/plans', this.wrapHandler(async (req, res) => {
+            res.send('ok');
+        }));
+
+        this.app.post('/vendors/:address/plans', this.wrapHandler(async (req, res) => {
+            res.send('ok');
+        }));
+
+        this.app.get('/vendors/:address', this.wrapHandler(async (req, res) => {
+            res.send('ok');
+        }));
+
+        this.app.post('/vendors', this.wrapHandler(async (req, res) => {
+            res.send('ok');
+        }));
+    }
+
     async start() {
         this.app.listen(port, () => {
-            // eslint-disable-next-line no-console
             console.log(`Web Server listening at ${port}...`);
         });
     }

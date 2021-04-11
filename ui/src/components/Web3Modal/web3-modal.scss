@@ -1,0 +1,64 @@
+@import "../../util/variables";
+
+.web3-modal {
+  @extend %col-nowrap;
+  width: 24rem;
+  cursor: default;
+
+  &__header {
+    @extend %row-nowrap;
+    align-items: center;
+    padding: 1rem 1.25rem;
+
+    &__title {
+      @extend %regular-font;
+      font-weight: 500;
+    }
+
+    &__content {
+      @extend %row-nowrap;
+      flex: 1 1 auto;
+      justify-content: flex-end;
+    }
+  }
+
+  &__content {
+    @extend %col-nowrap;
+    padding: 1rem 1.25rem;
+    background-color: rgba($black, .025);
+
+    &__row {
+      @extend %row-nowrap;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid $border-gray;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &__name {
+        flex: 1 1 auto;
+      }
+
+      &:hover {
+        border-color: rgba($black, .3);
+      }
+    }
+
+    .error-message {
+      text-align: center;
+      margin-top: 1rem;
+    }
+  }
+
+  &__footer {
+    @extend %row-nowrap;
+    background-color: rgba($black, .025);
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.25rem 1rem;
+
+    a {
+      margin-left: .25rem;
+    }
+  }
+}

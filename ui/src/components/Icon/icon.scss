@@ -1,0 +1,33 @@
+@import "../../util/variables";
+
+.icon {
+  @extend %row-nowrap;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  font-family: "FontAwesome";
+  user-select: none;
+
+  &__text {
+    @extend %row-nowrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 400;
+    height: 80%;
+    width: 80%;
+    background-color: rgba(#000, .05);
+    border-radius: 50%;
+  }
+
+  &--disabled {
+    opacity: .5;
+    cursor: default;
+  }
+
+  &--clickable {
+    cursor: pointer;
+  }
+}
