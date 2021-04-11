@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import {useAccount, useWeb3} from "../../ducks/web3";
 import Web3Modal from "../../components/Web3Modal";
 import Web3ConnectButton from "../../components/Web3ConnectButton";
+import Dashboard from "../Dashboard";
 
 export default function Index(): ReactElement {
     const web3 = useWeb3();
@@ -35,7 +36,7 @@ function Content(): ReactElement {
         <div className="content">
             <Switch>
                 <Route path="/">
-                    boop
+                    <Dashboard />
                 </Route>
                 <Route>
                     <Redirect to="/" />

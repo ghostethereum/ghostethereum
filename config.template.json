@@ -8,7 +8,9 @@
     "dbStorage": "",
     "dbName": "",
     "dbUsername": "",
-    "dbPassword": ""
+    "dbPassword": "",
+    "supportedTokens": [],
+    "pricefeeds": {}
   },
   "development": {
     "web3HTTPProvider": "",
@@ -19,6 +21,8 @@
     "dbStorage": "",
     "dbName":  "",
     "dbUsername":  "",
-    "dbPassword":  ""
+    "dbPassword":  "",
+    "supportedTokens": [],
+    "pricefeeds": {}
   }
 }

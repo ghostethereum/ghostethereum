@@ -1,0 +1,33 @@
+@import "../../util/variables";
+
+.input-group {
+  @extend %col-nowrap;
+
+  &__label {
+    @extend %h5;
+    color: $label-gray;
+    padding-bottom: .25rem;
+  }
+
+  input {
+    @extend %h4;
+    border: 1px solid $border-gray;
+    padding: .5rem .75rem;
+    outline: none;
+    transition: border-color 150ms ease-in-out;
+    border-radius: 4px;
+
+    &::placeholder {
+      color: $border-gray;
+    }
+
+    &:focus-within {
+      border-color: rgba($black, .3);
+    }
+  }
+
+  .error-message {
+    text-align: center;
+    padding-top: .25rem;
+  }
+}

@@ -1,0 +1,67 @@
+@import "../../util/variables";
+
+.add-profile-modal {
+  @extend %col-nowrap;
+  width: 24rem;
+  cursor: default;
+
+  .modal {
+    &__content {
+      padding: 1rem 1.25rem;
+      background-color: rgba($black, .025);
+
+      small {
+        margin-bottom: 1rem;
+      }
+
+      .input-group + .input-group {
+        margin-top: 1rem;
+      }
+
+      .dropdown-group + .dropdown-group {
+        margin-top: 1rem;
+      }
+
+      .plan-description-input {
+        margin-top: 1rem;
+      }
+    }
+
+    &__footer {
+      border-top: 1px solid $border-gray;
+      background-color: $white;
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      grid-gap: 1rem;
+      border-bottom-left-radius: .5rem;
+      border-bottom-right-radius: .5rem;
+
+      .button {
+        @extend %row-nowrap;
+        @extend %h4;
+        justify-content: center;
+        padding: .5rem .75rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__content-row {
+    @extend %row-nowrap;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid $border-gray;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &__name {
+      flex: 1 1 auto;
+    }
+
+    &:hover {
+      border-color: rgba($black, .3);
+    }
+  }
+}

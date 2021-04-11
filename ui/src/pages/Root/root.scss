@@ -24,7 +24,8 @@ html, body {
 }
 
 .content {
-  @extend %col-nowrap;
+  @extend %row-nowrap;
+  justify-content: center;
   flex: 1 1 auto;
 
   &__unauthenticated {

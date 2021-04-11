@@ -1,0 +1,96 @@
+@import "../../util/variables";
+
+.dashboard {
+  flex: 1 1 auto;
+  max-width: 72rem;
+  padding: 0 1rem;
+
+  &__header {
+    @extend %row-nowrap;
+    padding: 2rem 0;
+
+    &__content {
+      @extend %row-nowrap;
+      flex: 1 1 auto;
+    }
+
+    &__balance-group {
+      border: 1px solid $border-gray;
+      cursor: default;
+      min-width: 16rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+
+      &__label {
+        @extend %h5;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      &__balance {
+        font-size: 2.3125rem;
+        line-height: 1.3125;
+        font-weight: 300;
+        margin: .3125rem 0;
+        white-space: nowrap;
+      }
+
+      &__context {
+        @extend %h5;
+        color: $label-gray;
+
+        a {
+          cursor: pointer;
+        }
+      }
+    }
+
+    &__balance-group + &__balance-group {
+      margin-left: 1rem;
+    }
+
+    &__action {
+      .button {
+        @extend %h5;
+        font-weight: 600;
+        padding: .5rem 1rem;
+      }
+    }
+  }
+
+  &__content {
+    @extend %col-nowrap;
+
+    &__header {
+      @extend %row-nowrap;
+      align-items: center;
+      border-bottom: 1px solid $border-gray;
+      padding: 0 .5rem .5rem;
+      cursor: default;
+
+      &__title {
+        @extend %h3;
+        font-weight: 500;
+        flex: 1 1 auto;
+        padding: 0 .5rem;
+      }
+
+      .button {
+        @extend %h5;
+        font-weight: 600;
+        padding: .5rem .75rem;
+      }
+    }
+
+    &__body {
+      @extend %row-nowrap;
+      justify-content: center;
+    }
+
+    &__empty-text {
+      padding: 2rem;
+      color: $label-gray;
+      cursor: default;
+    }
+  }
+}

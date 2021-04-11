@@ -11,6 +11,10 @@ type Config = {
     dbName: string;
     dbUsername: string;
     dbPassword: string;
+    supportedTokens: string[];
+    pricefeeds: {
+        [pair: string]: string;
+    };
 }
 // @ts-ignore
 const config: Config = configs[env];

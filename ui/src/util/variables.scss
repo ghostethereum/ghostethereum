@@ -1,8 +1,9 @@
 $black: #000;
 $border-gray: rgba($black, .1);
+$label-gray: #c7c7c7;
 $secondary-gray: #efefef;
 $white: #fff;
-$primary-blue: #0043ff;
+$primary-blue: #0072ff;
 $error-red: #ff4f33;
 
 %col-nowrap {
@@ -20,8 +21,28 @@ $error-red: #ff4f33;
   line-height: 1.3125;
 }
 
+%h2 {
+  font-size: 1.5rem;
+  line-height: 1.3125;
+}
+
+%h3 {
+  font-size: 1.17rem;
+  line-height: 1.3125;
+}
+
 %h4 {
   font-size: 1rem;
+  line-height: 1.3125;
+}
+
+%h5 {
+  font-size: .83rem;
+  line-height: 1.3125;
+}
+
+%h6 {
+  font-size: .67rem;
   line-height: 1.3125;
 }
 

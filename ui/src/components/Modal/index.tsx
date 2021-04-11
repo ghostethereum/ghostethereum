@@ -1,6 +1,7 @@
-import React, {MouseEventHandler, ReactElement, ReactNode} from 'react';
+import React, {MouseEventHandler, ReactElement, ReactNode, ReactNodeArray} from 'react';
 import ReactDOM from 'react-dom';
 import './modal.scss';
+import Icon from "../Icon";
 
 
 type Props = {
@@ -23,5 +24,51 @@ export default function Modal(props: Props): ReactElement {
             </div>
         </div>,
         modalRoot,
+    );
+}
+
+type HeaderProps = {
+    onClose: () => void;
+    children: ReactNode;
+}
+
+export function ModalHeader(props: HeaderProps): ReactElement {
+    return (
+        <div className="modal__header">
+            <div className="modal__header__title">
+                {props.children}
+            </div>
+            <div className="modal__header__content">
+                <Icon
+                    fa="fas fa-times"
+                    size={1.25}
+                    onClick={props.onClose}
+                />
+            </div>
+        </div>
+    );
+}
+
+type ContentProps = {
+    children: ReactNode | ReactNodeArray;
+}
+
+export function ModalContent(props: ContentProps): ReactElement {
+    return (
+        <div className="modal__content">
+            {props.children}
+        </div>
+    );
+}
+
+type FooterProps = {
+    children: ReactNode | ReactNodeArray;
+}
+
+export function ModalFooter(props: ContentProps): ReactElement {
+    return (
+        <div className="modal__footer">
+            {props.children}
+        </div>
     );
 }

@@ -12,6 +12,8 @@ export default function Button(props: Props): ReactElement {
         className,
         btnType = '',
         children,
+        onClick,
+        disabled,
         ...btnProps
     } = props;
     return (
@@ -20,6 +22,8 @@ export default function Button(props: Props): ReactElement {
                 'button--primary': btnType === 'primary',
                 'button--secondary': btnType === 'secondary',
             })}
+            onClick={!disabled ? onClick : undefined}
+            disabled={disabled}
             {...btnProps}
         >
             {children}
