@@ -6,13 +6,16 @@ import subscription, {
     Subscription as SubscriptionType,
 } from "../models/subscription";
 import settlement, {Settlement} from "../models/settlement";
-import {Subscription} from "web3-core-subscriptions";
+import owner, {Owner} from "../models/owner";
+import plan from "../models/plan";
 
 export default class DBService extends GenericService {
     sequelize: Sequelize;
     blockchain?: ReturnType<typeof blockchain>;
     subscription?: ReturnType<typeof subscription>;
     settlement?: ReturnType<typeof settlement>;
+    owner?: ReturnType<typeof owner>;
+    plan?: ReturnType<typeof plan>;
 
     constructor() {
         super();
@@ -51,12 +54,19 @@ export default class DBService extends GenericService {
         this.blockchain = await blockchain(this.sequelize);
         this.subscription = await subscription(this.sequelize);
         this.settlement = await settlement(this.sequelize);
+        this.owner = await owner(this.sequelize);
+        this.plan = await plan(this.sequelize);
 
         this.subscription?.model.hasMany(this.settlement?.model);
         this.settlement?.model.belongsTo(this.subscription?.model);
 
+        this.owner?.model.hasMany(this.plan?.model);
+        this.plan?.model.belongsTo(this.owner?.model);
+
         this.blockchain?.model.sync();
-        this.subscription?.model.sync({ force: true });
-        this.settlement?.model.sync({ force: true });
+        this.subscription?.model.sync();
+        this.settlement?.model.sync();
+        this.owner?.model.sync();
+        this.plan?.model.sync();
     }
 }

@@ -42,7 +42,6 @@ export default class IndexerService extends GenericService {
 
         for (let i = 0; i < queue.length; i++) {
             const event = queue[i];
-            console.log(event);
             const {
                 ownerAddress,
                 subscriberAddress,
@@ -50,7 +49,6 @@ export default class IndexerService extends GenericService {
             } = parseID(event.returnValues.id);
 
             switch (event.event) {
-
                 case "SettlementSuccess":
                     await this.call('db', 'addOrUpdateSettlement', {
                         subscriptionId: event.returnValues.id,

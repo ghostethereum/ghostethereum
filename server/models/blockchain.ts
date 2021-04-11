@@ -1,4 +1,4 @@
-import {Sequelize, Model, BIGINT} from "sequelize";
+import {Sequelize, BIGINT} from "sequelize";
 
 const blockchain = (sequelize: Sequelize) => {
     const model = sequelize.define('blockchain', {
