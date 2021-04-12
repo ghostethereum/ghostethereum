@@ -10,7 +10,8 @@
     "dbUsername": "",
     "dbPassword": "",
     "supportedTokens": [],
-    "pricefeeds": {}
+    "pricefeeds": {},
+    "apiUrl": ""
   },
   "development": {
     "web3HTTPProvider": "",
@@ -23,6 +24,7 @@
     "dbUsername":  "",
     "dbPassword":  "",
     "supportedTokens": [],
-    "pricefeeds": {}
+    "pricefeeds": {},
+    "apiUrl":  ""
   }
 }

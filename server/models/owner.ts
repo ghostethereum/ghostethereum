@@ -8,16 +8,20 @@ export type Owner = {
   ghostContentAPIKey: string;
 };
 
+type CreateOwnerPayload = {
+    address: string;
+    ghostAPI: string;
+    ghostAdminAPIKey: string;
+    ghostContentAPIKey: string;
+};
+
 const owner = (sequelize: Sequelize) => {
     const model = sequelize.define('owner', {
         id: {
             type: UUIDV4,
+            defaultValue: UUIDV4,
             allowNull: false,
-            unique: true,
             primaryKey: true,
-            validate: {
-                notEmpty: true,
-            },
         },
         address: {
             type: STRING,
@@ -43,7 +47,7 @@ const owner = (sequelize: Sequelize) => {
         ],
     });
 
-    const createOwner = async (data: Owner) => {
+    const createOwner = async (data: CreateOwnerPayload) => {
         const result = await model.findOne({
             where: {
                 address: data.address,
@@ -97,19 +101,8 @@ const owner = (sequelize: Sequelize) => {
         return result.destroy();
     }
 
-    const getProfilesByAddress = async (address: string) => {
-        const result = await model.findAll({
-            where: {
-                address: address,
-            },
-        });
-
-        return result;
-    }
-
     return {
         model,
-        getProfilesByAddress,
         createOwner,
         updateOwner,
         deleteOwner,

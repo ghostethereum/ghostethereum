@@ -3,6 +3,8 @@
 .button {
   @extend %row-nowrap;
   @extend %regular-font;
+  align-items: center;
+  justify-content: center;
   padding: 1rem 1.5rem;
   cursor: pointer;
   border: 1px solid $border-gray;

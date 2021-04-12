@@ -48,6 +48,11 @@
     p:nth-of-type(1) {
       margin-top: 0;
     }
+
+    .error-message {
+      text-align: center;
+      margin-top: 1rem;
+    }
   }
 
   &__footer {

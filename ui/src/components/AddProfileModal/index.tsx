@@ -7,6 +7,8 @@ import GhostLogo from "../../../static/icons/ghost-logo-dark.png";
 import Input from "../Input";
 import Button from "../Button";
 import Dropdown from "../Dropdown";
+import {createPaymentProfile, PaymentPlan, PaymentProfilePayload} from "../../ducks/profiles";
+import {useDispatch} from "react-redux";
 
 type Props = {
     onClose: () => void;
@@ -18,18 +20,24 @@ enum Steps {
     PaymentPlans,
 }
 
-type PaymentPlan = {
-    title: 'monthly' | 'yearly' | 'weekly';
-    description: string;
-    currency: string;
-    amount: number;
-}
-
 export default function AddProfileModal(props: Props): ReactElement {
     const [currentStep, setStep] = useState(Steps.ChooseIntegration);
     const [adminUrl, setAdminUrl] = useState('');
     const [adminAPIKey, setAdminAPIKey] = useState('');
     const [plans, setPlans] = useState<PaymentPlan[]>([]);
+    const dispatch = useDispatch();
+
+    const onSubmit = useCallback(async () => {
+        return dispatch(createPaymentProfile({
+            adminUrl,
+            adminAPIKey,
+            plans,
+        }));
+    }, [
+        plans,
+        adminUrl,
+        adminAPIKey,
+    ]);
 
     switch (currentStep) {
         case Steps.ChooseIntegration:
@@ -58,6 +66,7 @@ export default function AddProfileModal(props: Props): ReactElement {
                     adminUrl={adminUrl}
                     onBack={() => setStep(Steps.IntegrationForm)}
                     onNext={() => null}
+                    onSubmit={onSubmit}
                     plans={plans}
                     setPlans={setPlans}
                 />
@@ -125,7 +134,11 @@ function IntegrationForm(props: StepProps & {
                 Enter Ghost Admin Info
             </ModalHeader>
             <ModalContent>
-                <small>Feel lost? <a href="https://ghost.org/docs/admin-api/#token-authentication" target="_blank">See instruction here</a></small>
+                <p>
+                    <small>
+                        Feel lost? <a href="https://ghost.org/docs/admin-api/#token-authentication" target="_blank">See instruction here</a>
+                    </small>
+                </p>
                 <Input
                     label="Base URL"
                     type="text"
@@ -288,13 +301,26 @@ function PaymentPlans(props: StepProps & {
     adminUrl: string;
     plans: PaymentPlan[];
     setPlans: (plans: PaymentPlan[]) => void;
+    onSubmit: () => Promise<any>;
 }): ReactElement {
     const [isAdding, setIsAdding] = useState(false);
+    const [sending, setSending] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const removePlan = useCallback((index: number) => {
         const newPlans = props.plans.filter((_, i) => i !== index);
         props.setPlans(newPlans);
     }, [props.plans]);
+
+    const onSubmit = useCallback(async () => {
+        setSending(true);
+        try {
+            await props.onSubmit();
+        } catch (e) {
+            setErrorMessage(e.message);
+        }
+        setSending(false);
+    }, [props.onSubmit])
 
     if (!props.plans.length || isAdding) {
         return (
@@ -356,6 +382,7 @@ function PaymentPlans(props: StepProps & {
                         </div>
                     ))
                 }
+                <small className="error-message">{errorMessage}</small>
             </ModalContent>
             <ModalFooter>
                 <Button
@@ -366,6 +393,8 @@ function PaymentPlans(props: StepProps & {
                 </Button>
                 <Button
                     btnType="primary"
+                    onClick={onSubmit}
+                    loading={sending}
                 >
                     Submit
                 </Button>

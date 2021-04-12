@@ -1,15 +1,17 @@
-import React, {ReactElement, ReactNode, useState} from "react";
+import React, {ReactElement, ReactNode, useEffect, useState} from "react";
 import "./dashboard.scss";
 import {useBalance} from "../../ducks/web3";
 import {fromWei} from "../../util/number";
 import Button from "../../components/Button";
 import AddProfileModal from "../../components/AddProfileModal";
+import {useDispatch} from "react-redux";
+import {fetchPaymentProfiles} from "../../ducks/profiles";
 
 export default function Dashboard(): ReactElement {
     return (
         <div className="dashboard">
             {renderDashboardHeader()}
-            {renderDashboardContent()}
+            <DashboardContent />
         </div>
     );
 }
@@ -49,8 +51,15 @@ function renderDashboardHeader(): ReactNode {
     )
 }
 
-function renderDashboardContent(): ReactNode {
+function DashboardContent(): ReactElement {
     const [showingModal, setShowingModal] = useState(false);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async function onDashboardContentMount() {
+            await dispatch(fetchPaymentProfiles());
+        })();
+    }, []);
 
     return (
         <>

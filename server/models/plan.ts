@@ -1,7 +1,17 @@
 import {BIGINT, Sequelize, STRING, UUIDV4} from "sequelize";
+import {PaymentPlan} from "../../ui/src/ducks/profiles";
 
 export type Plan = {
     id: string;
+    ownerId: string;
+    value: number;
+    tokenAddress: string;
+    interval: number;
+    title: string;
+    description: string;
+};
+
+export type CreatePlanPayload = {
     ownerId: string;
     value: number;
     tokenAddress: string;
@@ -14,12 +24,9 @@ const plan = (sequelize: Sequelize) => {
     const model = sequelize.define('plan', {
         id: {
             type: UUIDV4,
+            defaultValue: UUIDV4,
             allowNull: false,
-            unique: true,
             primaryKey: true,
-            validate: {
-                notEmpty: true,
-            },
         },
         ownerId: {
             type: UUIDV4,
@@ -63,7 +70,7 @@ const plan = (sequelize: Sequelize) => {
         ],
     });
 
-    const createPlan = async (data: Plan) => {
+    const createPlan = async (data: CreatePlanPayload) => {
         const result = await model.findOne({
             where: {
                 ownerId: data.ownerId,

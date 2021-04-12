@@ -5,8 +5,8 @@ import {AppRootState} from "../store/configureAppStore";
 import {Dispatch} from "redux";
 import {Subscription} from "web3-core-subscriptions";
 import {ThunkDispatch} from "redux-thunk";
-import ERC20ABI from '../../static/erc20-abi.json';
-import config from "../../../server/util/config";
+import ERC20ABI from '../../../util/erc20-abi.json';
+import config from "../../../util/config";
 
 enum ActionTypes {
     SET_WEB3 = 'web3/setWeb3',

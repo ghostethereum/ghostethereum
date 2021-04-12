@@ -1,4 +1,4 @@
-import configs from "../../config.json";
+import configs from "../config.json";
 const env = process.env.NODE_ENV || 'development';
 
 type Config = {
@@ -15,6 +15,7 @@ type Config = {
     pricefeeds: {
         [pair: string]: string;
     };
+    apiUrl: string;
 }
 // @ts-ignore
 const config: Config = configs[env];

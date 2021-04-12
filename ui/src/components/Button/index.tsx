@@ -1,10 +1,13 @@
 import React, {ButtonHTMLAttributes, ReactElement} from "react";
 import classNames from "classnames";
 import "./button.scss";
+import Icon from "../Icon";
+import SpinnerGif from "../../../static/icons/spinner.gif";
 
 type Props = {
     className?: string;
     btnType?: 'primary' | 'secondary' | '';
+    loading?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function Button(props: Props): ReactElement {
@@ -14,6 +17,7 @@ export default function Button(props: Props): ReactElement {
         children,
         onClick,
         disabled,
+        loading,
         ...btnProps
     } = props;
     return (
@@ -22,11 +26,11 @@ export default function Button(props: Props): ReactElement {
                 'button--primary': btnType === 'primary',
                 'button--secondary': btnType === 'secondary',
             })}
-            onClick={!disabled ? onClick : undefined}
+            onClick={!disabled && !loading ? onClick : undefined}
             disabled={disabled}
             {...btnProps}
         >
-            {children}
+            {loading ? <Icon url={SpinnerGif} />: children}
         </button>
     )
 }

@@ -2,9 +2,10 @@ import {GenericService} from "../util/svc";
 import Web3  from "web3";
 import {Contract} from "web3-eth-contract";
 import {Subscription} from "web3-core-subscriptions";
-import config from "../util/config";
+import config from "../../util/config";
 import subscriptionABI from "../util/subscription-abi.json";
 import {parseID} from "../util/contract";
+import ERC20ABI from '../../util/erc20-abi.json';
 
 export default class IndexerService extends GenericService {
     web3: Web3;
@@ -17,6 +18,13 @@ export default class IndexerService extends GenericService {
 
     ingestTimeout: any;
 
+    tokens: {
+        [symbol: string]: {
+            decimals: number;
+            address: string;
+        }
+    }
+
     constructor() {
         super();
         this.web3 = new Web3(new Web3.providers.WebsocketProvider(config.web3WSSProvider));
@@ -25,6 +33,23 @@ export default class IndexerService extends GenericService {
             config.subscriptionContractAddress,
         );
         this.queue = [];
+        this.tokens = {};
+    }
+
+    async inflateTokens() {
+        for (let tokenAddress of config.supportedTokens) {
+            const token = new this.web3.eth.Contract(ERC20ABI as any, tokenAddress);
+            const symbol = await token.methods.symbol().call();
+            const decimals = await token.methods.decimals().call();
+            this.tokens[symbol] = {
+                address: tokenAddress,
+                decimals,
+            };
+        }
+    }
+
+    getTokenData(symbol: string) {
+        return this.tokens[symbol];
     }
 
     addEventToQueue(event: any) {
@@ -106,6 +131,7 @@ export default class IndexerService extends GenericService {
     }
 
     async start() {
+        await this.inflateTokens();
         await this.subscribeEvents(8381397);
     }
 }
