@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from "react";
+import React, {ReactElement, useCallback, useState} from "react";
 import Modal, {ModalContent, ModalFooter, ModalHeader} from "../Modal";
 import "./add-profile-modal.scss";
 import Icon from "../Icon";
@@ -19,7 +19,7 @@ enum Steps {
 }
 
 type PaymentPlan = {
-    title: 'Monthly' | 'Yearly' | 'Weekly';
+    title: 'monthly' | 'yearly' | 'weekly';
     description: string;
     currency: string;
     amount: number;
@@ -55,6 +55,7 @@ export default function AddProfileModal(props: Props): ReactElement {
             return (
                 <PaymentPlans
                     {...props}
+                    adminUrl={adminUrl}
                     onBack={() => setStep(Steps.IntegrationForm)}
                     onNext={() => null}
                     plans={plans}
@@ -158,10 +159,74 @@ function IntegrationForm(props: StepProps & {
     );
 }
 
-function PaymentPlans(props: StepProps & {
+const paymentPlanValueToText: {
+    [k: string]: string;
+} = {
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+};
+
+const paymentPlansOptions = [
+    { value: 'monthly', text: 'Monthly'},
+    { value: 'yearly', text: 'Yearly'},
+];
+
+function AddPaymentPlan(props: StepProps & {
     plans: PaymentPlan[];
     setPlans: (plans: PaymentPlan[]) => void;
-}) {
+    onBackToPlans: () => void;
+}): ReactElement {
+    const {plans} = props;
+    const existingOptions = plans.reduce((map: any, plan) => {
+        map[plan.title] = true;
+        return map;
+    }, {});
+    const paymentOptions = paymentPlansOptions.filter(({value}) => !existingOptions[value]);
+    const [draftCurrency, setDraftCurrency] = useState<string>('DAI');
+    const [draftDescription, setDraftDescription] = useState<string>('');
+    const [draftAmount, setDraftAmount] = useState<number>();
+    const [draftTerm, setDraftTerm] = useState<'monthly'|'yearly'>(paymentOptions[0].value as any);
+
+    const updateCurrency = useCallback((e) => {
+        setDraftCurrency(e.target.value);
+    }, []);
+
+    const updateTerm = useCallback((e) => {
+        setDraftTerm(e.target.value);
+    }, []);
+
+    const updateDescription = useCallback((e) => {
+        setDraftDescription(e.target.value);
+    }, []);
+
+    const updateAmount = useCallback((e) => {
+        setDraftAmount(e.target.value);
+    }, []);
+
+    const disabled = !draftCurrency || !draftAmount || !draftTerm;
+
+    const onNext = useCallback(() => {
+        if (existingOptions[draftTerm]) {
+            return;
+        }
+
+        const newPlan: PaymentPlan = {
+          title: draftTerm,
+          description: draftDescription,
+          currency: draftCurrency,
+          amount: draftAmount || 0,
+        };
+
+        props.setPlans([...plans, newPlan]);
+        props.onBackToPlans();
+    }, [
+        plans,
+        draftTerm,
+        draftAmount,
+        draftDescription,
+        draftCurrency,
+    ]);
+
     return (
         <Modal
             className="add-profile-modal"
@@ -176,25 +241,121 @@ function PaymentPlans(props: StepProps & {
                     options={[
                         { value: 'DAI', text: 'DAI' },
                     ]}
+                    onChange={updateCurrency}
+                    value={draftCurrency}
                 />
                 <Dropdown
                     label="Payment Terms"
-                    options={[
-                        { value: 'weekly', text: 'Weekly'},
-                        { value: 'monthly', text: 'Monthly'},
-                        { value: 'yearly', text: 'Yearly'},
-                    ]}
+                    options={paymentOptions}
+                    value={draftTerm}
+                    onChange={updateTerm}
                 />
                 <Input
                     className="plan-description-input"
                     label="Plan Description"
                     type="text"
                     placeholder="e.g. month-to-month flexibility"
+                    onChange={updateDescription}
+                    value={draftDescription}
                 />
                 <Input
                     label="Amount"
                     type="number"
+                    onChange={updateAmount}
+                    value={draftAmount}
                 />
+            </ModalContent>
+            <ModalFooter>
+                <Button
+                    btnType="secondary"
+                    onClick={plans.length ? props.onBackToPlans : props.onBack}
+                >
+                    Back
+                </Button>
+                <Button
+                    btnType="primary"
+                    onClick={onNext}
+                    disabled={disabled}
+                >
+                    Add Plan
+                </Button>
+            </ModalFooter>
+        </Modal>
+    );
+}
+
+function PaymentPlans(props: StepProps & {
+    adminUrl: string;
+    plans: PaymentPlan[];
+    setPlans: (plans: PaymentPlan[]) => void;
+}): ReactElement {
+    const [isAdding, setIsAdding] = useState(false);
+
+    const removePlan = useCallback((index: number) => {
+        const newPlans = props.plans.filter((_, i) => i !== index);
+        props.setPlans(newPlans);
+    }, [props.plans]);
+
+    if (!props.plans.length || isAdding) {
+        return (
+            <AddPaymentPlan
+                {...props}
+                onBackToPlans={() => setIsAdding(false)}
+            />
+        );
+    }
+
+    return (
+        <Modal
+            className="add-profile-modal"
+            onClose={props.onClose}
+        >
+            <ModalHeader onClose={props.onClose}>
+                Payment Profile
+            </ModalHeader>
+            <ModalContent>
+                <p>You are ready to create your payment profile!</p>
+                <Input
+                    label="Admin URL"
+                    value={props.adminUrl}
+                    disabled
+                />
+                <div className="add-profile-modal__review-plans-label">
+                    Payment Plans
+                    {
+                        props.plans.length < 2 && (
+                            <div className="add-profile-modal__review-plans-label__action">
+                                <a onClick={() => setIsAdding(true)}>
+                                    Add new plan
+                                </a>
+                            </div>
+                        )
+                    }
+                </div>
+                {
+                    props.plans.map((plan, i) => (
+                        <div className="plan-row">
+                            <div className="plan-row__l">
+                                <div className="plan-row__title">
+                                    {paymentPlanValueToText[plan.title]}
+                                </div>
+                                <div className="plan-row__description">
+                                    {plan.description}
+                                </div>
+                            </div>
+                            <div className="plan-row__r">
+                                {`${plan.amount} ${plan.currency}`}
+                            </div>
+                            <div className="plan-row__remove">
+                                <Icon
+                                    size={1}
+                                    onClick={() => removePlan(i)}
+                                    fa="far fa-trash-alt"
+                                />
+                            </div>
+                        </div>
+                    ))
+                }
             </ModalContent>
             <ModalFooter>
                 <Button
@@ -205,9 +366,8 @@ function PaymentPlans(props: StepProps & {
                 </Button>
                 <Button
                     btnType="primary"
-                    onClick={props.onNext}
                 >
-                    Next
+                    Submit
                 </Button>
             </ModalFooter>
         </Modal>

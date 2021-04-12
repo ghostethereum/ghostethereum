@@ -64,4 +64,65 @@
       border-color: rgba($black, .3);
     }
   }
+
+  &__review-plans-label {
+    @extend %row-nowrap;
+    @extend %h5;
+    color: $label-gray;
+    margin: 1.25rem 0 .25rem;
+
+    &__action {
+      text-align: right;
+      flex: 1 1 auto;
+      cursor: pointer;
+    }
+  }
+}
+
+.plan-row {
+  @extend %row-nowrap;
+  align-items: center;
+  border: 1px solid $border-gray;
+  border-radius: 4px;
+  padding: .5rem .75rem;
+  margin-top: .5rem;
+
+  &__l {
+    @extend %col-nowrap;
+  }
+
+  &__title {
+    font-weight: 600;
+  }
+
+  &__description {
+    @extend %h5;
+    color: rgba($black, .5);
+  }
+
+  &__r {
+    @extend %h3;
+    @extend %col-nowrap;
+    align-items: flex-end;
+    justify-content: center;
+    flex: 1 1 auto;
+    font-weight: 500;
+  }
+
+  &__remove {
+    margin-left: .5rem;
+
+    .icon {
+      color: $label-gray;
+      transition: color 150ms ease-in-out;
+
+      &:hover {
+        color: $error-red;
+      }
+
+      &:active {
+        color: $error-red;
+      }
+    }
+  }
 }

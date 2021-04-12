@@ -44,6 +44,10 @@
     flex: 1 1 auto;
     max-height: 24rem;
     overflow-y: auto;
+
+    p:nth-of-type(1) {
+      margin-top: 0;
+    }
   }
 
   &__footer {

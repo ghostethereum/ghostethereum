@@ -13,7 +13,7 @@ type Props = {
 export default function Icon(props: Props): ReactElement {
     const {
         url,
-        size = 12,
+        size = 1,
         className = '',
         fa,
         onClick,
