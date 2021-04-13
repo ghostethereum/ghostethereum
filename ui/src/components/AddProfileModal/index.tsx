@@ -7,7 +7,7 @@ import GhostLogo from "../../../static/icons/ghost-logo-dark.png";
 import Input from "../Input";
 import Button from "../Button";
 import Dropdown from "../Dropdown";
-import {createPaymentProfile, PaymentPlan, PaymentProfilePayload} from "../../ducks/profiles";
+import {createPaymentProfile, fetchPaymentProfiles, PaymentPlan, PaymentProfilePayload} from "../../ducks/profiles";
 import {useDispatch} from "react-redux";
 
 type Props = {
@@ -28,11 +28,13 @@ export default function AddProfileModal(props: Props): ReactElement {
     const dispatch = useDispatch();
 
     const onSubmit = useCallback(async () => {
-        return dispatch(createPaymentProfile({
+        await dispatch(createPaymentProfile({
             adminUrl,
             adminAPIKey,
             plans,
         }));
+        props.onClose();
+        dispatch(fetchPaymentProfiles());
     }, [
         plans,
         adminUrl,

@@ -2,6 +2,8 @@ import {Dispatch} from "redux";
 import {AppRootState} from "../store/configureAppStore";
 import config from "../../../util/config";
 import {createProfile} from "../../../util/message-params";
+import {useSelector} from "react-redux";
+import deepEqual from "fast-deep-equal";
 
 enum ActionTypes {
     ADD_PAYMENT_PROFILES = 'profiles/addPaymentProfiles',
@@ -46,21 +48,51 @@ const initialState: State = {
 };
 
 
-const titleToText: {
+export const titleToText: {
     [k: string]: string;
 } = {
     monthly: 'Monthly',
     yearly: 'Yearly',
 };
 
+export const textToTitle: {
+    [k: string]: string;
+}  = {
+    Monthly: 'monthly',
+    Yearly: 'yearly',
+};
+
 export const fetchPaymentProfiles = () => async (
     dispatch: Dispatch,
     getState: () => AppRootState,
 ) => {
-    const {account} = getState().web3;
+    const {
+        web3: { account },
+        tokenData,
+    } = getState();
     const resp = await fetch(`${config.apiUrl}/vendors/${account}`);
     const json = await resp.json();
-    console.log(json);
+
+    if (json.error) {
+        return;
+    }
+
+    dispatch({
+        type: ActionTypes.ADD_PAYMENT_PROFILES,
+        payload: json.payload.map((profile: any) => ({
+            id: profile.id,
+            adminUrl: profile.ghostAPI,
+            adminAPIKey: profile.ghostAdminAPIKey,
+            plans: profile.plans.map((plan: any) => {
+                return {
+                    title: textToTitle[plan.title],
+                    description: plan.description,
+                    amount: plan.value / (10 ** tokenData[plan.tokenAddress].decimals),
+                    currency: tokenData[plan.tokenAddress].symbol,
+                };
+            }),
+        })),
+    });
 }
 
 export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
@@ -124,8 +156,8 @@ export default function profiles(state = initialState, action: Action): State {
         case ActionTypes.ADD_PAYMENT_PROFILES:
             return {
                 ...state,
-                order: action.payload.profiles.map(({ id }: PaymentProfile) => id),
-                map: action.payload.profiles.reduce((map: {[id: string]: PaymentProfile}, profile: PaymentProfile) => {
+                order: action.payload.map(({ id }: PaymentProfile) => id),
+                map: action.payload.reduce((map: {[id: string]: PaymentProfile}, profile: PaymentProfile) => {
                     map[profile.id] = profile;
                     return map;
                 }, {}),
@@ -133,4 +165,17 @@ export default function profiles(state = initialState, action: Action): State {
         default:
             return state;
     }
+}
+
+export const useProfileIDs = () => {
+    return useSelector((state: AppRootState) => {
+        return state.profiles.order;
+    }, deepEqual)
+}
+
+
+export const useProfileById = (id: string) => {
+    return useSelector((state: AppRootState) => {
+        return state.profiles.map[id];
+    }, deepEqual)
 }

@@ -5,7 +5,9 @@ import {fromWei} from "../../util/number";
 import Button from "../../components/Button";
 import AddProfileModal from "../../components/AddProfileModal";
 import {useDispatch} from "react-redux";
-import {fetchPaymentProfiles} from "../../ducks/profiles";
+import {fetchPaymentProfiles, useProfileById, useProfileIDs} from "../../ducks/profiles";
+import ProfileCard from "../../components/ProfileCard";
+import {fetchSupportedTokens} from "../../ducks/tokenData";
 
 export default function Dashboard(): ReactElement {
     return (
@@ -54,9 +56,11 @@ function renderDashboardHeader(): ReactNode {
 function DashboardContent(): ReactElement {
     const [showingModal, setShowingModal] = useState(false);
     const dispatch = useDispatch();
+    const profileIds = useProfileIDs();
 
     useEffect(() => {
         (async function onDashboardContentMount() {
+            await dispatch(fetchSupportedTokens());
             await dispatch(fetchPaymentProfiles());
         })();
     }, []);
@@ -76,9 +80,19 @@ function DashboardContent(): ReactElement {
                     </Button>
                 </div>
                 <div className="dashboard__content__body">
-                    <div className="dashboard__content__empty-text">
-                        No Profiles
-                    </div>
+                    {
+                        profileIds.length
+                            ? (
+                                <div className="dashboard__content__body__cards">
+                                    { profileIds.map(id => <ProfileCard key={id} id={id} /> )}
+                                </div>
+                            )
+                            : (
+                                <div className="dashboard__content__empty-text">
+                                    No Profiles
+                                </div>
+                            )
+                    }
                 </div>
             </div>
             { showingModal && <AddProfileModal onClose={() => setShowingModal(false)} /> }

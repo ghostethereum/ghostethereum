@@ -1,0 +1,102 @@
+@import "../../util/variables";
+
+.profile-card {
+  @extend %col-nowrap;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid $border-gray;
+  cursor: default;
+
+  &__group {
+    @extend %col-nowrap;
+
+    &__label {
+      @extend %row-nowrap;
+      @extend %h5;
+      align-items: center;
+      color: $label-gray;
+
+      &__text {
+        flex: 1 1 auto;
+      }
+    }
+
+    .icon {
+      opacity: 0;
+      transition: opacity 150ms ease-in-out;
+
+      &:hover {
+        opacity: .8 !important;
+      }
+
+      &:active {
+        opacity: 1 !important;
+      }
+    }
+
+    &:hover {
+      .icon {
+        opacity: .6;
+      }
+    }
+
+    &__value {
+      @extend %h3;
+      @extend %ellipsify;
+      font-weight: 300;
+      margin-top: .3125rem;
+    }
+
+    &:last-of-type {
+      flex: 1 1 auto;
+    }
+  }
+
+  &__group + &__group {
+    margin-top: 1rem;
+  }
+
+  &__plans {
+    margin-top: .5rem;
+
+    &__row {
+      @extend %row-nowrap;
+      align-items: center;
+      border: 1px solid $border-gray;
+      border-radius: 4px;
+      padding: .5rem .75rem;
+      margin-top: .5rem;
+
+      &__l {
+        @extend %col-nowrap;
+      }
+
+      &__title {
+        font-weight: 600;
+      }
+
+      &__description {
+        @extend %h5;
+        color: rgba($black, .5);
+      }
+
+      &__r {
+        @extend %h3;
+        @extend %col-nowrap;
+        align-items: flex-end;
+        justify-content: center;
+        flex: 1 1 auto;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .button {
+    @extend %h4;
+    font-weight: 600;
+    padding: .5rem .75rem;
+    margin-top: 1rem;
+    width: fit-content;
+    align-self: flex-end;
+  }
+}

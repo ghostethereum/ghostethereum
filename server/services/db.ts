@@ -123,7 +123,7 @@ export default class DBService extends GenericService {
         this.blockchain?.model.sync();
         this.subscription?.model.sync();
         this.settlement?.model.sync();
-        this.owner?.model.sync({ force: true });
+        this.owner?.model.sync();
         this.plan?.model.sync();
     }
 }

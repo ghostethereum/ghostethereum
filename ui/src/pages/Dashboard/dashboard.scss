@@ -83,11 +83,25 @@
     }
 
     &__body {
-      @extend %row-nowrap;
+      @extend %col-nowrap;
       justify-content: center;
+
+      &__cards {
+        padding: 1rem;
+        display: grid;
+        grid-auto-rows: auto;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 1rem;
+
+        .profile-card {
+          overflow: hidden;
+        }
+      }
     }
 
     &__empty-text {
+      @extend %row-nowrap;
+      justify-content: center;
       padding: 2rem;
       color: $label-gray;
       cursor: default;

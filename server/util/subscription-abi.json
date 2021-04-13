@@ -16,6 +16,24 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "subscriberAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -41,6 +59,24 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "subscriberAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
@@ -63,6 +99,24 @@
         "internalType": "bytes",
         "name": "uuid",
         "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "subscriberAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -94,6 +148,24 @@
         "internalType": "bytes",
         "name": "uuid",
         "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "subscriberAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
       }
     ],
     "name": "SubscriptionRemoved",
@@ -329,18 +401,13 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "ownerAddress",
-        "type": "address"
+        "internalType": "bytes",
+        "name": "uuid",
+        "type": "bytes"
       },
       {
         "internalType": "address",
         "name": "subscriberAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
         "type": "address"
       }
     ],
@@ -382,11 +449,6 @@
         "internalType": "bytes",
         "name": "uuid",
         "type": "bytes"
-      },
-      {
-        "internalType": "bool",
-        "name": "skipFirstPayment",
-        "type": "bool"
       }
     ],
     "name": "addSubscription",
