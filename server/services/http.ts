@@ -18,11 +18,11 @@ const whitelist: {[origin: string]: boolean} = {
 
 const corsOptions: CorsOptions = {
     origin: function (origin= '', callback) {
-        if (whitelist[origin]) {
+        // if (whitelist[origin]) {
             callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
+        // } else {
+        //     callback(new Error('Not allowed by CORS'))
+        // }
     }
 };
 
@@ -59,8 +59,15 @@ export default class HttpService extends GenericService {
     }
 
     addRoutes() {
-        this.app.get('/vendors/:address/plans', this.wrapHandler(async (req, res) => {
-            res.send('ok');
+        this.app.get('/subscriptions', this.wrapHandler(async (req, res) => {
+            const { subscriber } = req.query;
+            const result = await this.call('db', 'getSubscriptionBySubscriberAddress', subscriber);
+            res.send(makeResponse(result));
+        }));
+
+        this.app.get('/plans/:ownerId', this.wrapHandler(async (req, res) => {
+            const result = await this.call('db', 'getPlansByOwner', req.params.ownerId);
+            res.send(makeResponse(result));
         }));
 
         this.app.post('/vendors/:address/plans', jsonParser, this.wrapHandler(async (req, res) => {

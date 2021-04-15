@@ -75,6 +75,43 @@ export default class DBService extends GenericService {
         return result.map(r => r.toJSON());
     }
 
+    async getSubscriptionBySubscriberAddress(address: string) {
+        const result = await this.subscription?.getSubscriptionBySubscriberAddress(address);
+
+        if (!result) return [];
+
+        return result.map(r => r.toJSON());
+    }
+
+    async getPlansByOwner(ownerId: string) {
+        if (!this.plan) {
+            throw new Error('db ist not initialized');
+        }
+
+        const owner = await this.owner?.getOwnerById(ownerId);
+        const result = await this.plan?.getPlansByOwner(ownerId);
+        const returnData = [];
+
+
+        for (let r of result) {
+            const json = r.toJSON();
+            const tokenData = await this.call(
+                'indexer',
+                'getTokenData',
+                (json as any).tokenAddress,
+            );
+
+            returnData.push({
+                ...json,
+                ownerAddress: owner?.address,
+                tokenSymbol: tokenData.symbol,
+                tokenDecimals: +tokenData.decimals,
+            });
+        }
+
+        return returnData;
+    }
+
     async createOwnerProfile(data: PaymentProfilePayload, address: string) {
         const owner = await this.owner?.createOwner({
             ghostAdminAPIKey: data.adminAPIKey,

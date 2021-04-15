@@ -101,11 +101,24 @@ const owner = (sequelize: Sequelize) => {
         return result.destroy();
     }
 
+    const getOwnerById = async (id: string): Promise<Owner | null> => {
+        const result = await model.findOne({
+            where: {
+                id: id,
+            },
+        });
+
+        if (!result) return null;
+
+        return result.toJSON() as Owner;
+    }
+
     return {
         model,
         createOwner,
         updateOwner,
         deleteOwner,
+        getOwnerById,
     };
 }
 

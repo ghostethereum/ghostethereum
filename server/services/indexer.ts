@@ -4,7 +4,6 @@ import {Contract} from "web3-eth-contract";
 import {Subscription} from "web3-core-subscriptions";
 import config from "../../util/config";
 import subscriptionABI from "../util/subscription-abi.json";
-import {parseID} from "../util/contract";
 import ERC20ABI from '../../util/erc20-abi.json';
 
 export default class IndexerService extends GenericService {
@@ -22,6 +21,7 @@ export default class IndexerService extends GenericService {
         [symbol: string]: {
             decimals: number;
             address: string;
+            symbol: string
         }
     }
 
@@ -44,6 +44,12 @@ export default class IndexerService extends GenericService {
             this.tokens[symbol] = {
                 address: tokenAddress,
                 decimals,
+                symbol,
+            };
+            this.tokens[tokenAddress] = {
+                address: tokenAddress,
+                decimals,
+                symbol,
             };
         }
     }
@@ -57,7 +63,7 @@ export default class IndexerService extends GenericService {
             clearTimeout(this.ingestTimeout);
         }
         this.queue.push(event);
-        setTimeout(this.ingestQueue, 1000);
+        this.ingestTimeout = setTimeout(this.ingestQueue, 1000);
     }
 
     ingestQueue = async () => {
@@ -71,7 +77,7 @@ export default class IndexerService extends GenericService {
                 ownerAddress,
                 subscriberAddress,
                 tokenAddress,
-            } = parseID(event.returnValues.id);
+            } = event.returnValues;
 
             switch (event.event) {
                 case "SettlementSuccess":
@@ -124,6 +130,7 @@ export default class IndexerService extends GenericService {
             fromBlock,
             toBlock: 'latest',
         }, async (error: any, event: any) => {
+            console.log(event);
             if (!error) {
                 this.addEventToQueue(event);
             }

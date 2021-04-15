@@ -134,10 +134,19 @@ const subscription = (sequelize: Sequelize) => {
         });
     }
 
+    const getSubscriptionBySubscriberAddress = async (subscriberAddress: string) => {
+        const result = await model.findAll({
+            where: { subscriberAddress },
+        });
+
+        return result;
+    }
+
     return {
         model,
         addSubscription,
         cancelSubscription,
+        getSubscriptionBySubscriberAddress,
     };
 }
 
