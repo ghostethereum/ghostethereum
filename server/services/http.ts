@@ -6,6 +6,7 @@ import Web3 from "web3";
 import {recoverTypedSignature_v4} from "eth-sig-util";
 import {createProfile} from "../../util/message-params";
 import assert from "assert";
+const GhostAdminAPI = require('@tryghost/admin-api');
 
 const port = process.env.PORT || 11664;
 
@@ -70,8 +71,72 @@ export default class HttpService extends GenericService {
             res.send(makeResponse(result));
         }));
 
-        this.app.post('/vendors/:address/plans', jsonParser, this.wrapHandler(async (req, res) => {
-            res.send('ok');
+        this.app.post('/ghost/signup', jsonParser, this.wrapHandler(async (req, res) => {
+            const { signature, account, email, uuid } = req.body;
+
+            assert(email);
+            assert(uuid);
+
+            const msgParams: any = {
+                domain: {
+                    chainId: 4,
+                    version: '1',
+                },
+                primaryType: 'Payload',
+                types: {
+                    EIP712Domain: [
+                        { name: 'chainId', type: 'uint' },
+                        { name: 'version', type: 'string' },
+                    ],
+                    Payload: [
+                        { name: 'email', type: 'string' },
+                    ],
+                },
+                message: { email },
+            };
+            const address = recoverTypedSignature_v4({
+                sig: signature,
+                data: msgParams,
+            });
+
+            const checksumAddress = Web3.utils.toChecksumAddress(address);
+
+            assert(
+                checksumAddress === Web3.utils.toChecksumAddress(account),
+                'invalid signature'
+            );
+
+            const owner = await this.call('db', 'getOwnerById', uuid);
+            const subscription = await this.call(
+                'db',
+                'getSubscriptionById',
+                `0x${uuid.replace(/-/g, '')}${checksumAddress.toLowerCase().slice(2)}`,
+            )
+
+            assert(subscription, 'cannot find subscription');
+            assert(owner, 'cannot find owner profile');
+
+            const api = new GhostAdminAPI({
+                url: owner.ghostAPI,
+                key: owner.ghostAdminAPIKey,
+                version: 'v3',
+            });
+
+            const existing = await api.members.browse({
+                filter: `email:${email}`
+            });
+
+            assert(!existing.length, 'member email already exist');
+
+            const ghostMember = await api.members.add({
+                name: '',
+                email: email,
+                note: `address=${checksumAddress}`
+            });
+
+            await this.call('db', 'updateGhostId', subscription.id, ghostMember.id);
+
+            res.send(makeResponse(ghostMember));
         }));
 
         this.app.get('/vendors/:address', this.wrapHandler(async (req, res) => {

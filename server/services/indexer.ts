@@ -131,6 +131,7 @@ export default class IndexerService extends GenericService {
             toBlock: 'latest',
         }, async (error: any, event: any) => {
             console.log(event);
+
             if (!error) {
                 this.addEventToQueue(event);
             }

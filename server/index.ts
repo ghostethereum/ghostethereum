@@ -1,3 +1,4 @@
+import "isomorphic-fetch";
 import {MainService} from "./util/svc";
 import HttpService from "./services/http";
 import IndexerService from "./services/indexer";

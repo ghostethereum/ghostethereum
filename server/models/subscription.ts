@@ -10,6 +10,7 @@ export type Subscription = {
     value: number;
     interval: number;
     cancelled: boolean;
+    ghostId: string;
 };
 
 const subscription = (sequelize: Sequelize) => {
@@ -29,6 +30,9 @@ const subscription = (sequelize: Sequelize) => {
             validate: {
                 notEmpty: true,
             },
+        },
+        ghostId: {
+            type: STRING,
         },
         blockHeight: {
             type: BIGINT,
@@ -120,6 +124,20 @@ const subscription = (sequelize: Sequelize) => {
         });
     }
 
+    const updateGhostId = async (id: string, ghostId: string) => {
+        const result = await model.findOne({
+            where: { id },
+        });
+
+        if (!result) {
+            return Promise.reject(`cannot find subscription id - ${id}`);
+        }
+
+        return result.update({
+            ghostId,
+        });
+    }
+
     const cancelSubscription = async (id: string) => {
         const result = await model.findOne({
             where: { id },
@@ -142,11 +160,23 @@ const subscription = (sequelize: Sequelize) => {
         return result;
     }
 
+    const getSubscriptionById = async (
+        id: string,
+    ) => {
+        const result = await model.findOne({
+            where: { id },
+        });
+
+        return result;
+    }
+
     return {
         model,
         addSubscription,
         cancelSubscription,
         getSubscriptionBySubscriberAddress,
+        getSubscriptionById,
+        updateGhostId,
     };
 }
 

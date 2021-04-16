@@ -52,6 +52,10 @@ export default class DBService extends GenericService {
         return this.subscription?.addSubscription(data);
     }
 
+    async updateGhostId(id: string, ghostId: string) {
+        return this.subscription?.updateGhostId(id, ghostId);
+    }
+
     async cancelSubscription(id: string) {
         return this.subscription?.cancelSubscription(id);
     }
@@ -82,6 +86,22 @@ export default class DBService extends GenericService {
 
         return result.map(r => r.toJSON());
     }
+
+    async getSubscriptionById(id: string) {
+        const result = await this.subscription?.getSubscriptionById(
+            id,
+        );
+        return result?.toJSON();
+    }
+
+    async getOwnerById(id: string) {
+        const result = await this.owner?.getOwnerById(id);
+
+        if (!result) return [];
+
+        return result;
+    }
+
 
     async getPlansByOwner(ownerId: string) {
         if (!this.plan) {
@@ -158,7 +178,7 @@ export default class DBService extends GenericService {
         this.plan?.model.belongsTo(this.owner?.model);
 
         this.blockchain?.model.sync();
-        this.subscription?.model.sync();
+        this.subscription?.model.sync({ force: false });
         this.settlement?.model.sync();
         this.owner?.model.sync();
         this.plan?.model.sync();
