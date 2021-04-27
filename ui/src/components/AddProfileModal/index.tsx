@@ -1,13 +1,18 @@
-import React, {ReactElement, useCallback, useState} from "react";
+import React, {ReactElement, useCallback, useEffect, useState} from "react";
 import Modal, {ModalContent, ModalFooter, ModalHeader} from "../Modal";
 import "./add-profile-modal.scss";
 import Icon from "../Icon";
-import SpinnerGif from "../../../static/icons/spinner.gif";
 import GhostLogo from "../../../static/icons/ghost-logo-dark.png";
 import Input from "../Input";
 import Button from "../Button";
 import Dropdown from "../Dropdown";
-import {createPaymentProfile, fetchPaymentProfiles, PaymentPlan, PaymentProfilePayload} from "../../ducks/profiles";
+import {
+    createPaymentProfile,
+    fetchPaymentProfiles,
+    PaymentPlan,
+    PaymentProfilePayload, updatePaymentProfile,
+    useProfileById
+} from "../../ducks/profiles";
 import {useDispatch} from "react-redux";
 
 type Props = {
@@ -78,6 +83,83 @@ export default function AddProfileModal(props: Props): ReactElement {
                 <ChooseIntegration
                     {...props}
                     onNext={() => setStep(Steps.IntegrationForm)}
+                />
+            );
+    }
+}
+
+type UpdateProfileProps = {
+    id: string;
+    onClose: () => void;
+}
+
+export function UpdateProfileModal(props: UpdateProfileProps): ReactElement {
+    const [currentStep, setStep] = useState(Steps.ChooseIntegration);
+    const [adminUrl, setAdminUrl] = useState('');
+    const [adminAPIKey, setAdminAPIKey] = useState('');
+    const [plans, setPlans] = useState<PaymentPlan[]>([]);
+    const dispatch = useDispatch();
+    const profile = useProfileById(props.id);
+
+    useEffect(() => {
+        setAdminUrl(profile.adminUrl);
+        setAdminAPIKey(profile.adminAPIKey);
+        setPlans(profile.plans);
+    }, [
+        profile.adminUrl,
+        profile.adminAPIKey,
+        JSON.stringify(profile.plans),
+    ]);
+
+    const onSubmit = useCallback(async () => {
+        await dispatch(updatePaymentProfile({
+            id: props.id,
+            adminUrl,
+            adminAPIKey,
+            plans,
+        }));
+        props.onClose();
+        dispatch(fetchPaymentProfiles());
+    }, [
+        plans,
+        adminUrl,
+        adminAPIKey,
+    ]);
+
+    switch (currentStep) {
+        case Steps.IntegrationForm:
+            return (
+                <IntegrationForm
+                    {...props}
+                    onNext={() => setStep(Steps.PaymentPlans)}
+                    onBack={props.onClose}
+                    adminUrl={adminUrl}
+                    adminAPIKey={adminAPIKey}
+                    updateAdminUrl={(url: string) => setAdminUrl(url)}
+                    updateAdminAPIKey={(key: string) => setAdminAPIKey(key)}
+                />
+            );
+        case Steps.PaymentPlans:
+            return (
+                <PaymentPlans
+                    {...props}
+                    adminUrl={adminUrl}
+                    onBack={() => setStep(Steps.IntegrationForm)}
+                    onNext={() => null}
+                    onSubmit={onSubmit}
+                    plans={plans}
+                    setPlans={setPlans}
+                />
+            )
+        default:
+            return (
+                <IntegrationForm
+                    {...props}
+                    onNext={() => setStep(Steps.PaymentPlans)}
+                    adminUrl={adminUrl}
+                    adminAPIKey={adminAPIKey}
+                    updateAdminUrl={(url: string) => setAdminUrl(url)}
+                    updateAdminAPIKey={(key: string) => setAdminAPIKey(key)}
                 />
             );
     }

@@ -67,10 +67,11 @@ export const fetchPaymentProfiles = () => async (
     getState: () => AppRootState,
 ) => {
     const {
-        web3: { account },
+        web3: { account, web3 },
         tokenData,
     } = getState();
-    const resp = await fetch(`${config.apiUrl}/vendors/${account}`);
+    const checksum = web3.utils.toChecksumAddress(account);
+    const resp = await fetch(`${config.apiUrl}/vendors/${checksum}`);
     const json = await resp.json();
 
     if (json.error) {
@@ -126,6 +127,63 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
             try {
                 const resp = await fetch(`${config.apiUrl}/vendors`, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ...profile,
+                        signature: response.result,
+                        account: account,
+                    }),
+                });
+
+                const json = await resp.json();
+
+                if (json.error) {
+                    throw new Error(json.payload);
+                }
+
+                resolve(json);
+            } catch (e) {
+                reject(e);
+            }
+
+        });
+    });
+};
+
+
+export const updatePaymentProfile = (payload: PaymentProfilePayload) => async (
+    dispatch: Dispatch,
+    getState: () => AppRootState,
+) => {
+    const {web3, account} = getState().web3;
+    const profile = {
+        ...payload,
+        plans: payload.plans.map(plan => ({
+            ...plan,
+            title: titleToText[plan.title],
+        }))
+    };
+    const msgParams = JSON.stringify({
+        ...createProfile,
+        message: profile,
+    });
+    const opt = {
+        method: 'eth_signTypedData_v4',
+        params: [account, msgParams],
+        from: account,
+    };
+
+    return new Promise((resolve, reject) => {
+        web3.currentProvider.sendAsync(opt, async (err: any, response: any) => {
+            if (err) {
+                return reject(err);
+            }
+
+            try {
+                const resp = await fetch(`${config.apiUrl}/profiles/${profile.id}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },

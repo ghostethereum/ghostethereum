@@ -132,6 +132,41 @@ export default class DBService extends GenericService {
         return returnData;
     }
 
+    async updateOwnerProfile(data: PaymentProfilePayload, address: string) {
+        const owner = await this.owner?.updateOwner({
+            id: data.id as string,
+            ghostAdminAPIKey: data.adminAPIKey,
+            ghostAPI: data.adminUrl,
+            ghostContentAPIKey: '',
+            address: address,
+        });
+
+        await this.plan?.deletePlansByOwner((owner as any).id);
+
+        const plans = [];
+
+        for (let i = 0; i < data.plans.length; i++) {
+            const plan = data.plans[i];
+            const tokenData = await this.call('indexer', 'getTokenData', plan.currency);
+            const planPayload: CreatePlanPayload = {
+                title: plan.title,
+                description: plan.description,
+                value: plan.amount * (10 ** tokenData.decimals),
+                tokenAddress: tokenData.address,
+                ownerId: (owner as any).id,
+                interval: TitleToInterval[plan.title],
+            };
+
+            const result = await this.plan?.createPlan(planPayload);
+            plans.push(result!.toJSON());
+        }
+
+        return {
+            ...owner!.toJSON(),
+            plans,
+        };
+    }
+
     async createOwnerProfile(data: PaymentProfilePayload, address: string) {
         const owner = await this.owner?.createOwner({
             ghostAdminAPIKey: data.adminAPIKey,

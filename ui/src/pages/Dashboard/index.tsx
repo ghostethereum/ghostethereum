@@ -1,6 +1,6 @@
 import React, {ReactElement, ReactNode, useEffect, useState} from "react";
 import "./dashboard.scss";
-import {useBalance} from "../../ducks/web3";
+import {useAccount, useBalance} from "../../ducks/web3";
 import {fromWei} from "../../util/number";
 import Button from "../../components/Button";
 import AddProfileModal from "../../components/AddProfileModal";
@@ -54,6 +54,7 @@ function renderDashboardHeader(): ReactNode {
 }
 
 function DashboardContent(): ReactElement {
+    const account = useAccount();
     const [showingModal, setShowingModal] = useState(false);
     const dispatch = useDispatch();
     const profileIds = useProfileIDs();
@@ -63,7 +64,7 @@ function DashboardContent(): ReactElement {
             await dispatch(fetchSupportedTokens());
             await dispatch(fetchPaymentProfiles());
         })();
-    }, []);
+    }, [account]);
 
     return (
         <>

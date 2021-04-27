@@ -136,9 +136,22 @@ const plan = (sequelize: Sequelize) => {
         return result;
     }
 
+    const deletePlansByOwner = async (ownerId: string) => {
+        const result = await model.findAll({
+            where: {
+                ownerId: ownerId,
+            },
+        });
+
+        for (let plan of result) {
+            await plan.destroy();
+        }
+    }
+
     return {
         model,
         getPlansByOwner,
+        deletePlansByOwner,
         createPlan,
         updatePlan,
         deletePlan,

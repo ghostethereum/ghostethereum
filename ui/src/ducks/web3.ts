@@ -54,6 +54,18 @@ export const setWeb3 = (web3: Web3 | null, account: string) => async (
                dispatch(fetchSupportedTokens());
             }
         });
+
+        // @ts-ignore
+        web3.currentProvider.on('accountsChanged', ([account]) => {
+            dispatch({
+                type: ActionTypes.SET_WEB3,
+                payload: {
+                    web3,
+                    account,
+                }
+            });
+            dispatch(fetchSupportedTokens());
+        });
     }
 
     dispatch({

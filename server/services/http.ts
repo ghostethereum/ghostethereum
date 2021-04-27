@@ -181,6 +181,41 @@ export default class HttpService extends GenericService {
 
             res.send(makeResponse(result));
         }));
+
+        this.app.put('/profiles/:profileId', jsonParser, this.wrapHandler(async (req, res) => {
+            const { signature, account, ...message } = req.body;
+            const {profileId} = req.params;
+
+            assert(!!message.adminUrl && typeof message.adminUrl === 'string');
+            assert(!!message.adminAPIKey && typeof message.adminAPIKey === 'string');
+            assert(message.plans.length);
+
+            const msgParams: any = {
+                ...createProfile,
+                message: message,
+            };
+            const address = recoverTypedSignature_v4({
+                sig: signature,
+                data: msgParams,
+            });
+
+            const checksumAddress = Web3.utils.toChecksumAddress(address);
+
+            assert(checksumAddress === Web3.utils.toChecksumAddress(account));
+
+            const result = await this.call(
+                'db', 'updateOwnerProfile',
+                {
+                    id: profileId,
+                    adminUrl: message.adminUrl,
+                    adminAPIKey: message.adminAPIKey,
+                    plans: message.plans,
+                },
+                checksumAddress,
+            );
+
+            res.send(makeResponse(result));
+        }));
     }
 
     async start() {

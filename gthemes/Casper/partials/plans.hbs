@@ -1,0 +1,25 @@
+<div class="box mt2 tl">
+
+    <h3 class="mt0">Premium membership</h3>
+
+    <ul class="plan-features">
+        <li>Receive premium-only newsletters</li>
+        <li>Unlock access to the full post archive</li>
+        <li>Post comments and be part of the community</li>
+    </ul>
+
+    <div class="mt2">
+        {{#if show_buttons}}
+            <p>
+                <a class="button" href="javascript:" data-members-plan="Monthly">Pay {{price @price.monthly}} monthly</a>
+                &nbsp; or &nbsp;
+                <a class="button" href="javascript:" data-members-plan="Yearly">Pay {{price @price.yearly}} yearly</a>
+            </p>
+            <p class="mb0"><small>Simple, secure card payment. Cancel any time.</small></p>
+        {{else}}
+            <p><b>{{price @price.monthly}} monthly or {{price @price.yearly}} yearly</b></p>
+            <p class="mb0">To get a premium membership, please first subscribe using the form above. Then it's just a single click to the checkout.</p>
+        {{/if}}
+    </div>
+
+</div>
