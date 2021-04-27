@@ -10,7 +10,7 @@ import {
     createPaymentProfile,
     fetchPaymentProfiles,
     PaymentPlan,
-    PaymentProfilePayload, updatePaymentProfile,
+    updatePaymentProfile,
     useProfileById
 } from "../../ducks/profiles";
 import {useDispatch} from "react-redux";
@@ -259,11 +259,13 @@ function IntegrationForm(props: StepProps & {
 const paymentPlanValueToText: {
     [k: string]: string;
 } = {
+    per_minute: 'By Minute (dev test)',
     monthly: 'Monthly',
     yearly: 'Yearly',
 };
 
 const paymentPlansOptions = [
+    { value: 'per_minute', text: 'By Minute (dev test)'},
     { value: 'monthly', text: 'Monthly'},
     { value: 'yearly', text: 'Yearly'},
 ];
@@ -433,7 +435,7 @@ function PaymentPlans(props: StepProps & {
                 <div className="add-profile-modal__review-plans-label">
                     Payment Plans
                     {
-                        props.plans.length < 2 && (
+                        props.plans.length < 3 && (
                             <div className="add-profile-modal__review-plans-label__action">
                                 <a onClick={() => setIsAdding(true)}>
                                     Add new plan

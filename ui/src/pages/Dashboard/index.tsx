@@ -1,6 +1,6 @@
-import React, {ReactElement, ReactNode, useEffect, useState} from "react";
+import React, {ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
 import "./dashboard.scss";
-import {useAccount, useBalance} from "../../ducks/web3";
+import {settleOwnerSubscriptions, useAccount, useBalance, useClaimable} from "../../ducks/web3";
 import {fromWei} from "../../util/number";
 import Button from "../../components/Button";
 import AddProfileModal from "../../components/AddProfileModal";
@@ -20,6 +20,11 @@ export default function Dashboard(): ReactElement {
 
 function renderDashboardHeader(): ReactNode {
     const { DAI } = useBalance();
+    const { DAI: claimableDai } = useClaimable();
+    const dispatch = useDispatch();
+    const settle = useCallback(() => {
+        dispatch(settleOwnerSubscriptions());
+    }, []);
 
     return (
         <div className="dashboard__header">
@@ -40,10 +45,10 @@ function renderDashboardHeader(): ReactNode {
                         Claimable Balance
                     </div>
                     <div className="dashboard__header__balance-group__balance">
-                        {fromWei(0)} DAI
+                        {fromWei(claimableDai)} DAI
                     </div>
                     <div className="dashboard__header__balance-group__context">
-                        <a>
+                        <a onClick={settle}>
                             Settle balance
                         </a>
                     </div>

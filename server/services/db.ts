@@ -9,7 +9,6 @@ import settlement, {Settlement} from "../models/settlement";
 import owner from "../models/owner";
 import plan, {CreatePlanPayload} from "../models/plan";
 import {PaymentProfilePayload} from "../../ui/src/ducks/profiles";
-import assert from "assert";
 
 const TitleToInterval: {
     [title: string]: number;
@@ -17,6 +16,7 @@ const TitleToInterval: {
     Monthly: 60 * 60 * 24 * (365/12),
     Yearly: 60 * 60 * 24 * 365,
     Weekly: 60 * 60 * 24 * 7,
+    'By Minute (dev test)': 60,
 };
 
 export default class DBService extends GenericService {

@@ -51,6 +51,7 @@ const initialState: State = {
 export const titleToText: {
     [k: string]: string;
 } = {
+    per_minute: 'By Minute (dev test)',
     monthly: 'Monthly',
     yearly: 'Yearly',
 };
@@ -58,6 +59,7 @@ export const titleToText: {
 export const textToTitle: {
     [k: string]: string;
 }  = {
+    'By Minute (dev test)': 'per_minute',
     Monthly: 'monthly',
     Yearly: 'yearly',
 };
