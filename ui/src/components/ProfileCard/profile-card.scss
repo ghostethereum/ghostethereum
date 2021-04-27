@@ -91,6 +91,15 @@
     }
   }
 
+  &__actions {
+    @extend %row-nowrap;
+    justify-content: flex-end;
+  }
+
+  .button + .button {
+    margin-left: 1rem;
+  }
+
   .button {
     @extend %h4;
     font-weight: 600;

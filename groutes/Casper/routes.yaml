@@ -1,0 +1,16 @@
+routes:
+  /subscribe/:
+    template: members-signup
+    # Uncomment the next line if you want to show the title and content from your "/subscribe/" page
+    # data: page.subscribe
+  /signin/: members-signin
+  /account/: members-account
+
+collections:
+  /:
+    permalink: /{slug}/
+    template: index
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/

@@ -1,0 +1,29 @@
+@import "../../util/variables";
+
+.download-theme {
+  @extend %col-nowrap;
+  width: 24rem;
+  cursor: default;
+
+  .modal {
+    &__content {
+      padding: 1rem 1.25rem;
+
+      ol {
+        margin-top: 0;
+        padding-left: 1.25rem;
+      }
+
+      li {
+        .button {
+          @extend %h5;
+          margin-top: .5rem;
+          margin-bottom: 1rem;
+          width: fit-content;
+          padding: .5rem .75rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

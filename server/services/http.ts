@@ -10,6 +10,9 @@ import {createProfile} from "../../util/message-params";
 import assert from "assert";
 const GhostAdminAPI = require('@tryghost/admin-api');
 import fs from "fs";
+import JSZip from "jszip";
+import path from "path";
+import config from "../../util/config";
 const privateKey = fs.readFileSync("./key.pem", 'utf8');
 const certificate = fs.readFileSync("./cert.pem", 'utf8');
 
@@ -216,6 +219,40 @@ export default class HttpService extends GenericService {
 
             res.send(makeResponse(result));
         }));
+
+        this.app.get('/ghost-themes/:theme/:ownerId', this.wrapHandler(async (req, res) => {
+            const {theme, ownerId} = req.params;
+
+            const zip = new JSZip();
+            const dir = path.join(process.cwd(), 'gthemes', theme);
+
+            await copyDirectoryToZip(zip, dir);
+
+            let membersSignupContent = await fs.readFileSync(path.join(dir, 'members-signup.hbs'), 'utf-8');
+
+            membersSignupContent = membersSignupContent.replace(/{{THEME_UUID}}/g, ownerId);
+            membersSignupContent = membersSignupContent.replace(/{{THEME_WEB3_PAY_URL}}/g, config.apiUrl);
+            membersSignupContent = membersSignupContent.replace(/{{THEME_CONTRACT_ADDRESS}}/g, config.subscriptionContractAddress);
+
+            zip.file('members-signup.hbs', membersSignupContent);
+
+            const content = await zip.generateAsync({ type: 'nodebuffer' })
+            res.setHeader('Content-Disposition', 'attachment; filename="theme.zip"');
+            res.setHeader('Content-Type', 'application/zip');
+            res.send(content);
+        }));
+
+        this.app.get('/ghost-routes/:theme/:ownerId', this.wrapHandler(async (req, res) => {
+            const {theme, ownerId} = req.params;
+
+            const filepath = path.join(process.cwd(), 'groutes', theme, 'routes.yaml');
+
+            const content = await fs.readFileSync(filepath, 'utf-8');
+
+            res.setHeader('Content-Disposition', 'attachment; filename="routes.yaml"');
+            res.setHeader('Content-Type', 'text/plain');
+            res.send(content);
+        }));
     }
 
     async start() {
@@ -229,5 +266,22 @@ export default class HttpService extends GenericService {
         // this.app.listen(port, () => {
         //     console.log(`Web Server listening at ${port}...`);
         // });
+    }
+}
+
+async function copyDirectoryToZip(
+    zip: JSZip,
+    dirpath: string,
+) {
+    const files = fs.readdirSync(dirpath);
+    for (let file of files) {
+        const filepath = path.join(dirpath, file);
+        if (fs.lstatSync(filepath).isDirectory()) {
+            const dir = zip.folder(file);
+            await copyDirectoryToZip(dir as JSZip, filepath);
+        } else {
+            const content = fs.readFileSync(filepath);
+            zip.file(file, content)
+        }
     }
 }

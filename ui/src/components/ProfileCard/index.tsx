@@ -6,6 +6,7 @@ import copy from "copy-to-clipboard";
 import Button from "../Button";
 import {useHistory} from "react-router";
 import {UpdateProfileModal} from "../AddProfileModal";
+import DownloadThemeModal from "../DownloadThemeModal";
 
 type Props = {
     id: string;
@@ -14,6 +15,7 @@ type Props = {
 export default function ProfileCard(props: Props): ReactElement {
     const profile = useProfileById(props.id);
     const [showingModal, setShowingModal] = useState(false);
+    const [showingThemeModal, setShowingThemeModal] = useState(false);
 
     return (
         <>
@@ -21,6 +23,12 @@ export default function ProfileCard(props: Props): ReactElement {
                 <UpdateProfileModal
                     id={props.id}
                     onClose={() => setShowingModal(false)}
+                />
+            )}
+            {showingThemeModal && (
+                <DownloadThemeModal
+                    id={props.id}
+                    onClose={() => setShowingThemeModal(false)}
                 />
             )}
             <div className="profile-card">
@@ -48,12 +56,20 @@ export default function ProfileCard(props: Props): ReactElement {
                         }
                     </div>
                 ))}
-                <Button
-                    btnType="primary"
-                    onClick={() => setShowingModal(true)}
-                >
-                    Edit
-                </Button>
+                <div className="profile-card__actions">
+                    <Button
+                        btnType="secondary"
+                        onClick={() => setShowingThemeModal(true)}
+                    >
+                        Setup Theme
+                    </Button>
+                    <Button
+                        btnType="primary"
+                        onClick={() => setShowingModal(true)}
+                    >
+                        Edit
+                    </Button>
+                </div>
             </div>
         </>
     );
