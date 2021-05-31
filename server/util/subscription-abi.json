@@ -584,12 +584,17 @@
   {
     "inputs": [
       {
-        "internalType": "bytes",
-        "name": "subscriptionID",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "ownerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
       }
     ],
-    "name": "getAmountOwed",
+    "name": "getClaimableAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -604,12 +609,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "ownerAddress",
-        "type": "address"
+        "internalType": "bytes",
+        "name": "subscriptionID",
+        "type": "bytes"
       }
     ],
-    "name": "getClaimableByOwner",
+    "name": "getAmountOwed",
     "outputs": [
       {
         "internalType": "uint256",

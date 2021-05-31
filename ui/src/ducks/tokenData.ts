@@ -31,17 +31,22 @@ const initialState: State = {
 export const fetchSupportedTokens = () => async (dispatch: Dispatch, getState: () => AppRootState) => {
     const {web3} = getState().web3;
     for (let address of config.supportedTokens) {
-        const token = new web3.eth.Contract(ERC20ABI, address);
-        const symbol = await token.methods.symbol().call();
-        const decimals = await token.methods.decimals().call();
-        dispatch({
-            type: ActionTypes.SET_TOKEN_DATA,
-            payload: {
-                symbol,
-                decimals,
-                address,
-            }
-        })
+        try {
+            const token = new web3.eth.Contract(ERC20ABI, address);
+            const symbol = await token.methods.symbol().call();
+            const decimals = await token.methods.decimals().call();
+
+            dispatch({
+                type: ActionTypes.SET_TOKEN_DATA,
+                payload: {
+                    symbol,
+                    decimals,
+                    address,
+                }
+            })
+        } catch (e) {
+            console.error('error fetching token data', e);
+        }
     }
 };
 

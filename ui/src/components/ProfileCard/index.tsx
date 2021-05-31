@@ -7,6 +7,7 @@ import Button from "../Button";
 import {useHistory} from "react-router";
 import {UpdateProfileModal} from "../AddProfileModal";
 import DownloadThemeModal from "../DownloadThemeModal";
+import {fromWei} from "../../util/number";
 
 type Props = {
     id: string;

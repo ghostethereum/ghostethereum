@@ -151,7 +151,7 @@ export default class DBService extends GenericService {
             const planPayload: CreatePlanPayload = {
                 title: plan.title,
                 description: plan.description,
-                value: plan.amount * (10 ** tokenData.decimals),
+                value: plan.amount,
                 tokenAddress: tokenData.address,
                 ownerId: (owner as any).id,
                 interval: TitleToInterval[plan.title],
@@ -183,7 +183,7 @@ export default class DBService extends GenericService {
             const planPayload: CreatePlanPayload = {
                 title: plan.title,
                 description: plan.description,
-                value: plan.amount * (10 ** tokenData.decimals),
+                value: plan.amount,
                 tokenAddress: tokenData.address,
                 ownerId: (owner as any).id,
                 interval: TitleToInterval[plan.title],

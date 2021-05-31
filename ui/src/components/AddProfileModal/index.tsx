@@ -104,7 +104,10 @@ export function UpdateProfileModal(props: UpdateProfileProps): ReactElement {
     useEffect(() => {
         setAdminUrl(profile.adminUrl);
         setAdminAPIKey(profile.adminAPIKey);
-        setPlans(profile.plans);
+        setPlans(profile.plans.map(plan => ({
+            ...plan,
+            amount: plan.amount / (10 ** 18),
+        })));
     }, [
         profile.adminUrl,
         profile.adminAPIKey,

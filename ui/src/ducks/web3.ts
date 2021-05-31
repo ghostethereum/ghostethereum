@@ -25,6 +25,7 @@ type Action = {
 type State = {
     web3: Web3 | null;
     account: string;
+    networkType: string;
     balance: {
         [symbol: string]: string;
     };
@@ -36,6 +37,7 @@ type State = {
 const initialState: State = {
     web3: null,
     account: '',
+    networkType: '',
     balance: {},
     claimable: {},
 };
@@ -52,6 +54,8 @@ export const setWeb3 = (web3: Web3 | null, account: string) => async (
         event = null;
     }
 
+    let networkType = '';
+
     if (web3) {
         event = web3.eth.subscribe('newBlockHeaders', (err, result) => {
             if (!err) {
@@ -60,6 +64,8 @@ export const setWeb3 = (web3: Web3 | null, account: string) => async (
             }
         });
 
+        networkType = await web3.eth.net.getNetworkType();
+
         // @ts-ignore
         web3.currentProvider.on('accountsChanged', ([account]) => {
             dispatch({
@@ -67,6 +73,23 @@ export const setWeb3 = (web3: Web3 | null, account: string) => async (
                 payload: {
                     web3,
                     account,
+                    networkType,
+                }
+            });
+            dispatch(fetchSupportedTokens());
+        });
+
+        // @ts-ignore
+        web3.currentProvider.on('networkChanged', async ([account]) => {
+            const networkType = await web3.eth.net.getNetworkType();
+            const accounts = await web3.eth.requestAccounts();
+
+            dispatch({
+                type: ActionTypes.SET_WEB3,
+                payload: {
+                    web3,
+                    account: accounts[0],
+                    networkType,
                 }
             });
             dispatch(fetchSupportedTokens());
@@ -78,6 +101,7 @@ export const setWeb3 = (web3: Web3 | null, account: string) => async (
         payload: {
             web3,
             account,
+            networkType,
         }
     });
 
@@ -90,7 +114,11 @@ export const fetchClaimable = () => async (dispatch: Dispatch, getState: () => A
 
     if (web3) {
         const contract = new web3.eth.Contract(SUBSCRIPTION_ABI, config.subscriptionContractAddress);
-        const balance = await contract.methods.getClaimableByOwner(account).call();
+        const balance = await contract.methods
+            .getClaimableAmount(account, config.supportedTokens[0])
+            .call()
+            .catch(() => 0);
+
         dispatch({
             type: ActionTypes.SET_CLAIMABLE,
             payload: {
@@ -168,6 +196,7 @@ export default function web3(state = initialState, action: Action) {
                 ...state,
                 web3: action.payload?.web3,
                 account: action.payload?.account,
+                networkType: action.payload?.networkType,
             };
         case ActionTypes.SET_BALANCE:
             return {
@@ -199,6 +228,12 @@ export const useWeb3 = () => {
 export const useAccount = () => {
     return useSelector((state: AppRootState) => {
         return state.web3.account;
+    }, deepEqual);
+}
+
+export const useNetworktype = () => {
+    return useSelector((state: AppRootState) => {
+        return state.web3.networkType;
     }, deepEqual);
 }
 

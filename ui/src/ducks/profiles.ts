@@ -107,6 +107,7 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
         ...payload,
         plans: payload.plans.map(plan => ({
             ...plan,
+            amount: String(plan.amount * (10 ** 18)),
             title: titleToText[plan.title],
         }))
     };
@@ -120,8 +121,11 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
         from: account,
     };
 
+    console.log(opt);
+
     return new Promise((resolve, reject) => {
         web3.currentProvider.sendAsync(opt, async (err: any, response: any) => {
+            console.log(err, response)
             if (err) {
                 return reject(err);
             }
@@ -140,7 +144,7 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
                 });
 
                 const json = await resp.json();
-
+                console.log(json)
                 if (json.error) {
                     throw new Error(json.payload);
                 }
@@ -164,6 +168,7 @@ export const updatePaymentProfile = (payload: PaymentProfilePayload) => async (
         ...payload,
         plans: payload.plans.map(plan => ({
             ...plan,
+            amount: String(plan.amount * (10 ** 18)),
             title: titleToText[plan.title],
         }))
     };
