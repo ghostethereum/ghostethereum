@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev-ui": "webpack-dev-server --config webpack.ui.config.js --hot --inline",
-    "dev": "NODE_ENV=development concurrently --kill-others-on-fail npm:watch-server npm:dev-server npm:dev-ui",
+    "build-ui": " webpack --config webpack.ui.config.js",
     "dev-server": "nodemon ./build-server/server.js",
     "watch-server": "webpack --config webpack.server.config.js --inline --watch",
     "build-server": "webpack --config webpack.server.config.js",
-    "build-ui": " webpack --config webpack.ui.config.js",
+    "build-casper": " webpack --config webpack.casper.config.js",
+    "watch-casper": " webpack --config webpack.casper.config.js --inline --watch",
+    "dev": "NODE_ENV=development concurrently --kill-others-on-fail npm:watch-server npm:dev-server npm:dev-ui",
     "build": "npm run build-ui && npm run build-server",
     "start": "NODE_ENV=production npm run build && node ./build-server/server.js"
   },

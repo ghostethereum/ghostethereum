@@ -229,13 +229,13 @@ export default class HttpService extends GenericService {
 
             await copyDirectoryToZip(zip, dir);
 
-            let membersSignupContent = await fs.readFileSync(path.join(dir, 'members-signup.hbs'), 'utf-8');
+            let membersSignupContent = await fs.readFileSync(path.join(dir, 'assets/react/signup.js'), 'utf-8');
 
             membersSignupContent = membersSignupContent.replace(/{{THEME_UUID}}/g, ownerId);
             membersSignupContent = membersSignupContent.replace(/{{THEME_WEB3_PAY_URL}}/g, config.apiUrl);
             membersSignupContent = membersSignupContent.replace(/{{THEME_CONTRACT_ADDRESS}}/g, config.subscriptionContractAddress);
 
-            zip.file('members-signup.hbs', membersSignupContent);
+            zip.file('assets/react/signup.js', membersSignupContent);
 
             const content = await zip.generateAsync({ type: 'nodebuffer' })
             res.setHeader('Content-Disposition', 'attachment; filename="theme.zip"');
@@ -279,6 +279,9 @@ async function copyDirectoryToZip(
     for (let file of files) {
         const filepath = path.join(dirpath, file);
         if (fs.lstatSync(filepath).isDirectory()) {
+            if (filepath.includes('node_modules')) {
+                continue;
+            }
             const dir = zip.folder(file);
             await copyDirectoryToZip(dir as JSZip, filepath);
         } else {

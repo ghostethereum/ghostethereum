@@ -1999,14 +1999,7 @@ the right place. Onward!
     display: flex;
     flex-flow: column nowrap;
     width: 24rem;
-}
-
-.sign-up-main__plan-option:nth-of-type(1) {
-    margin-right: .5rem;
-}
-
-.sign-up-main__plan-option:nth-of-type(2) {
-    margin-left: .5rem;
+    margin: 0 .5rem;
 }
 
 .sign-up-main__plan-option__price {
@@ -2061,12 +2054,11 @@ button.sign-up-main__plan-option__approve-btn {
     width: 100%;
 }
 
-button.sign-up-main__plan-option__approve-btn > img,
-button.sign-up-main__plan-option__select-pending-btn > img,
-button.sign-up-main__email-form__submit-btn > img {
-    width: 100%;
-    height: 32px;
-    object-fit: contain;
+button.sign-up-main__plan-option__approve-btn > .spinner,
+button.sign-up-main__plan-option__select-pending-btn > .spinner,
+button.sign-up-main__email-form__submit-btn > .spinner {
+    height: 32px !important;
+    margin: 0 auto;
 }
 
 button.sign-up-main__plan-option__approve-pending-btn > img,
@@ -2148,10 +2140,8 @@ button.sign-up-main__plan-option__select-btn:disabled {
     color: rgb(0 126 255 / 90%);
 }
 
-.web3-btn > img {
-    width: 10.3125rem;
-    height: 32px;
-    object-fit: contain;
+.web3-btn-wrapper__address .identicon {
+    margin: 2px 0px 2px 4px;
 }
 
 .web3-btn:hover {
@@ -2195,4 +2185,9 @@ div[data-ref-signup] {
     flex-flow: row nowrap;
     width: 100%;
     justify-content: center;
+}
+
+.spinner {
+    background-image: url('../spinner.gif');
+    background-size: cover;
 }
