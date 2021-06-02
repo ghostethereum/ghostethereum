@@ -144,7 +144,6 @@ export async function getTokenInfo(
     const token = new web3.eth.Contract(ERC20_ABI, tokenAddress);
     const balance = await token.methods.balanceOf(account).call();
     const allowance = await token.methods.allowance(account, contractAddress).call();
-    console.log(tokenAddress, balance, allowance);
     return { balance, allowance };
 }
 

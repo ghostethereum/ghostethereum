@@ -121,8 +121,6 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
         from: account,
     };
 
-    console.log(opt);
-
     return new Promise((resolve, reject) => {
         web3.currentProvider.sendAsync(opt, async (err: any, response: any) => {
             console.log(err, response)
@@ -144,7 +142,7 @@ export const createPaymentProfile = (payload: PaymentProfilePayload) => async (
                 });
 
                 const json = await resp.json();
-                console.log(json)
+
                 if (json.error) {
                     throw new Error(json.payload);
                 }

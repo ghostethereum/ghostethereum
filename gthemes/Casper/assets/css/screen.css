@@ -2061,16 +2061,13 @@ button.sign-up-main__email-form__submit-btn > .spinner {
     margin: 0 auto;
 }
 
-button.sign-up-main__plan-option__approve-pending-btn > img,
-button.sign-up-main__plan-option__subscribe-pending-btn > img {
-    width: 32px;
-    height: 32px;
-    margin-left: .5rem;
-    object-fit: contain;
+button.sign-up-main__plan-option__approve-pending-btn > .spinner,
+button.sign-up-main__plan-option__subscribe-pending-btn > .spinner {
     display: inline-block;
 }
 
-button.sign-up-main__plan-option__approve-pending-btn {
+button.sign-up-main__plan-option__approve-pending-btn,
+button.sign-up-main__plan-option__subscribe-pending-btn {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
@@ -2190,4 +2187,73 @@ div[data-ref-signup] {
 .spinner {
     background-image: url('../spinner.gif');
     background-size: cover;
+}
+
+.account-page {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.account-page__content {
+    display: flex;
+    flex-flow: column nowrap;
+    max-width: 28rem;
+    margin: 3rem auto;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, .1);
+}
+
+.account-page__group {
+    display: flex;
+    flex-flow: row nowrap;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+    align-items: center;
+    padding: 1rem 1.5rem;
+    cursor: default;
+}
+
+.account-page__group__info {
+    flex: 1 0 auto;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+}
+
+.account-page__group__title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3125;
+}
+
+.account-page__group__value {
+    font-size: 14px;
+    line-height: 1.3125;
+    color: rgba(0, 0, 0, .5);
+}
+
+.account-page__group__action > a {
+    color: var(--ghost-accent-color);
+    font-size: 14px;
+}
+
+button.account-page__sign-out {
+    background-color: #FFF;
+    border: 1px solid rgba(0,0,0, .1);
+    border-radius: 3px;
+    padding: .5rem 1.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 150ms border ease-in-out;
+}
+
+button.account-page__sign-out:hover {
+    border: 1px solid rgba(0,0,0, .2);
+}
+
+button.account-page__sign-out:active {
+    border: 1px solid rgba(0,0,0, .3);
+}
+
+.clickable {
+    cursor: pointer;
 }

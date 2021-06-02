@@ -1,0 +1,15 @@
+{{!< default}}
+
+<main class="sign-up-main">
+    <h1 class="sign-up-main__title">
+        {{#page}}{{title}}{{else}}Your account{{/page}}
+    </h1>
+
+    {{#if @member}}
+        <div id="account" data-member-email="{{@member.email}}"></div>
+    {{else}}
+        <p class="tc">Redirecting...</p>
+        <script>window.location = '{{@site.url}}/subscribe/';</script>
+    {{/if}}
+</main>
+<script src="{{asset "react/account.js"}}"></script>

@@ -115,6 +115,11 @@ const subscription = (sequelize: Sequelize) => {
             });
         }
 
+        // @ts-ignore
+        if (result.toJSON().blockHeight > data.blockHeight) {
+            return;
+        }
+
         return await result.update({
             txHash: data.txHash,
             blockHeight: data.blockHeight,
@@ -149,12 +154,16 @@ const subscription = (sequelize: Sequelize) => {
 
         return result.update({
             cancelled: true,
+            ghostId: null,
         });
     }
 
     const getSubscriptionBySubscriberAddress = async (subscriberAddress: string) => {
         const result = await model.findAll({
-            where: { subscriberAddress },
+            where: {
+                subscriberAddress,
+                cancelled: false,
+            },
         });
 
         return result;

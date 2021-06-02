@@ -60,6 +60,10 @@ export default class DBService extends GenericService {
         return this.subscription?.cancelSubscription(id);
     }
 
+    async getLastSettle(data: string) {
+        return this.settlement?.getLastSettle(data);
+    }
+
     async addOrUpdateSettlement(data: Settlement) {
         return this.settlement?.addOrUpdateSettlement(data);
     }
@@ -212,10 +216,10 @@ export default class DBService extends GenericService {
         this.owner?.model.hasMany(this.plan?.model);
         this.plan?.model.belongsTo(this.owner?.model);
 
-        this.blockchain?.model.sync();
+        this.blockchain?.model.sync({ force: false });
         this.subscription?.model.sync({ force: false });
-        this.settlement?.model.sync();
-        this.owner?.model.sync();
-        this.plan?.model.sync();
+        this.settlement?.model.sync({ force: false });
+        this.owner?.model.sync({ force: false });
+        this.plan?.model.sync({ force: false });
     }
 }

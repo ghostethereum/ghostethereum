@@ -5,6 +5,7 @@ import {Subscription} from "web3-core-subscriptions";
 import config from "../../util/config";
 import subscriptionABI from "../util/subscription-abi.json";
 import ERC20ABI from '../../util/erc20-abi.json';
+const GhostAdminAPI = require('@tryghost/admin-api');
 
 export default class IndexerService extends GenericService {
     web3: Web3;
@@ -63,6 +64,8 @@ export default class IndexerService extends GenericService {
             clearTimeout(this.ingestTimeout);
         }
         this.queue.push(event);
+
+        if (this.ingestTimeout) clearTimeout(this.ingestTimeout);
         this.ingestTimeout = setTimeout(this.ingestQueue, 1000);
     }
 
@@ -79,49 +82,85 @@ export default class IndexerService extends GenericService {
                 tokenAddress,
             } = event.returnValues;
 
-            switch (event.event) {
-                case "SettlementSuccess":
-                    await this.call('db', 'addOrUpdateSettlement', {
-                        subscriptionId: event.returnValues.id,
-                        txHash: event.transactionHash,
-                        blockHeight: event.blockNumber,
-                        ownerAddress,
-                        subscriberAddress,
-                        tokenAddress,
-                        value: Number(event.returnValues.value),
-                        error: false,
-                    });
-                    break;
-                case "SettlementFailure":
-                    await this.call('db', 'addOrUpdateSettlement', {
-                        subscriptionId: event.returnValues.id,
-                        txHash: event.transactionHash,
-                        blockHeight: event.blockNumber,
-                        ownerAddress,
-                        subscriberAddress,
-                        tokenAddress,
-                        value: Number(event.returnValues.value),
-                        error: true,
-                    });
-                    break;
-                case "SubscriptionAdded":
-                    await this.call('db', 'addSubscription', {
-                        id: event.returnValues.id,
-                        txHash: event.transactionHash,
-                        blockHeight: event.blockNumber,
-                        ownerAddress,
-                        subscriberAddress,
-                        tokenAddress,
-                        value: Number(event.returnValues.value),
-                        interval: Number(event.returnValues.interval),
-                        cancelled: false,
-                    });
-                    break;
-                case "SubscriptionRemoved":
-                    await this.call('db', 'cancelSubscription', event.returnValues.id);
-                    break;
+            try {
+                switch (event.event) {
+                    case "SettlementSuccess":
+                        await this.call('db', 'addOrUpdateSettlement', {
+                            subscriptionId: event.returnValues.id,
+                            txHash: event.transactionHash,
+                            blockHeight: event.blockNumber,
+                            ownerAddress,
+                            subscriberAddress,
+                            tokenAddress,
+                            value: Number(event.returnValues.value),
+                            error: false,
+                        });
+                        break;
+                    case "SettlementFailure":
+                        await this.handleSettlementFailure(event);
+                        break;
+                    case "SubscriptionAdded":
+                        await this.call('db', 'addSubscription', {
+                            id: event.returnValues.id,
+                            txHash: event.transactionHash,
+                            blockHeight: event.blockNumber,
+                            ownerAddress,
+                            subscriberAddress,
+                            tokenAddress,
+                            value: Number(event.returnValues.value),
+                            interval: Number(event.returnValues.interval),
+                            cancelled: false,
+                        });
+                        break;
+                    case "SubscriptionRemoved":
+                        const owner = await this.call('db', 'getOwnerById', toUUID(event.returnValues.uuid));
+                        const subscription = await this.call('db', 'getSubscriptionById', event.returnValues.id);
+                        const api = new GhostAdminAPI({
+                            url: owner.ghostAPI,
+                            key: owner.ghostAdminAPIKey,
+                            version: 'v3',
+                        });
+
+                        if (event.blockNumber <= subscription.blockHeight) {
+                            continue;
+                        }
+
+                        const existing = await api.members.browse({
+                            filter: `id:${subscription.ghostId}`
+                        });
+
+                        if (existing.length) {
+                            await this.call('db', 'cancelSubscription', event.returnValues.id);
+                            await api.members.delete({
+                                id: subscription.ghostId
+                            });
+                        }
+                        break;
+                }
+            } catch (e) {
+                console.log(event);
+                console.log(e);
             }
         }
+    }
+
+    async handleSettlementFailure(event: any) {
+        const {
+            ownerAddress,
+            subscriberAddress,
+            tokenAddress,
+        } = event.returnValues;
+
+        await this.call('db', 'addOrUpdateSettlement', {
+            subscriptionId: event.returnValues.id,
+            txHash: event.transactionHash,
+            blockHeight: event.blockNumber,
+            ownerAddress,
+            subscriberAddress,
+            tokenAddress,
+            value: Number(event.returnValues.value),
+            error: true,
+        });
     }
 
     async subscribeEvents(fromBlock: number) {
@@ -130,8 +169,6 @@ export default class IndexerService extends GenericService {
             fromBlock,
             toBlock: 'latest',
         }, async (error: any, event: any) => {
-            console.log(event);
-
             if (!error) {
                 this.addEventToQueue(event);
             }
@@ -142,4 +179,9 @@ export default class IndexerService extends GenericService {
         await this.inflateTokens();
         await this.subscribeEvents(8381397);
     }
+}
+
+function toUUID(uuid: string) {
+    let adj = uuid.length > 32 ? uuid.slice(-32) : uuid;
+    return `${adj.slice(0, 8)}-${adj.slice(8, 12)}-${adj.slice(12, 16)}-${adj.slice(16, 20)}-${adj.slice(20, 32)}`
 }

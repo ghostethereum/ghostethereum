@@ -55,6 +55,7 @@ module.exports = [
         mode: isProd ? 'production' : 'development',
         entry: {
             'signup': `./theme/signup.tsx`,
+            'account': `./theme/account.tsx`,
         },
         // devtool: 'source-map',
         resolve: {

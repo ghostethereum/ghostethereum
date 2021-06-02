@@ -61,7 +61,7 @@ const settlement = (sequelize: Sequelize) => {
             allowNull: false,
             validate: {
                 notEmpty: true,
-                min: 1,
+                min: 0,
             },
         },
         error: {
@@ -80,6 +80,20 @@ const settlement = (sequelize: Sequelize) => {
         ],
     });
 
+    const getLastSettle = async (subscriptionId: string) => {
+        const result = await model.findAll({
+            where: {
+                subscriptionId: subscriptionId,
+            },
+            order: [
+                ['blockHeight', 'DESC']
+            ],
+            limit: 1,
+        });
+
+        return result;
+    }
+
     const addOrUpdateSettlement = async (data: Settlement) => {
         const result = await model.findOne({
             where: {
@@ -90,6 +104,12 @@ const settlement = (sequelize: Sequelize) => {
 
         if (result) {
             return result.update({
+                subscriptionId: data.subscriptionId,
+                txHash: data.txHash,
+                blockHeight: data.blockHeight,
+                ownerAddress: data.ownerAddress,
+                subscriberAddress: data.subscriberAddress,
+                tokenAddress: data.tokenAddress,
                 value: data.value,
                 error: data.error,
             });
@@ -110,6 +130,7 @@ const settlement = (sequelize: Sequelize) => {
     return {
         model,
         addOrUpdateSettlement,
+        getLastSettle,
     };
 }
 

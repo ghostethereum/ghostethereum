@@ -148,6 +148,52 @@ export default class HttpService extends GenericService {
             res.send(makeResponse(ghostMember));
         }));
 
+        this.app.get('/ghost/member/:uuid', jsonParser, this.wrapHandler(async (req, res) => {
+            const { uuid } = req.params;
+            const { email } = req.query;
+
+            assert(email);
+            assert(uuid);
+
+            const owner = await this.call('db', 'getOwnerById', uuid);
+
+            const api = new GhostAdminAPI({
+                url: owner.ghostAPI,
+                key: owner.ghostAdminAPIKey,
+                version: 'v3',
+            });
+
+            const existing = await api.members.browse({
+                filter: `email:${email}`
+            });
+
+            assert(!!existing.length, 'member email does not exist');
+
+            const [member] = existing;
+            const [,address] = member.note?.split('=');
+            const checksumAddress = Web3.utils.toChecksumAddress(address);
+            const subscriptionId = `0x${uuid.replace(/-/g, '')}${checksumAddress.toLowerCase().slice(2)}`;
+            const subscription = await this.call(
+                'db',
+                'getSubscriptionById',
+                subscriptionId,
+            );
+            const [lastSettlement] = await this.call(
+                'db',
+                'getLastSettle',
+                subscriptionId,
+            )
+
+            assert(subscription, 'cannot find subscription');
+            assert(owner, 'cannot find owner profile');
+
+            res.send(makeResponse({
+                member,
+                subscription,
+                lastSettlement,
+            }));
+        }));
+
         this.app.get('/vendors/:address', this.wrapHandler(async (req, res) => {
             const result = await this.call('db', 'getPaymentProfilesByOwner', req.params.address);
             res.send(makeResponse(result));
@@ -230,12 +276,17 @@ export default class HttpService extends GenericService {
             await copyDirectoryToZip(zip, dir);
 
             let membersSignupContent = await fs.readFileSync(path.join(dir, 'assets/react/signup.js'), 'utf-8');
-
             membersSignupContent = membersSignupContent.replace(/{{THEME_UUID}}/g, ownerId);
             membersSignupContent = membersSignupContent.replace(/{{THEME_WEB3_PAY_URL}}/g, config.apiUrl);
             membersSignupContent = membersSignupContent.replace(/{{THEME_CONTRACT_ADDRESS}}/g, config.subscriptionContractAddress);
 
+            let membersAccountContent = await fs.readFileSync(path.join(dir, 'assets/react/account.js'), 'utf-8');
+            membersAccountContent = membersAccountContent.replace(/{{THEME_UUID}}/g, ownerId);
+            membersAccountContent = membersAccountContent.replace(/{{THEME_WEB3_PAY_URL}}/g, config.apiUrl);
+            membersAccountContent = membersAccountContent.replace(/{{THEME_CONTRACT_ADDRESS}}/g, config.subscriptionContractAddress);
+
             zip.file('assets/react/signup.js', membersSignupContent);
+            zip.file('assets/react/account.js', membersAccountContent);
 
             const content = await zip.generateAsync({ type: 'nodebuffer' })
             res.setHeader('Content-Disposition', 'attachment; filename="theme.zip"');

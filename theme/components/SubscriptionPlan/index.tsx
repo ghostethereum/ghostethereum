@@ -29,6 +29,21 @@ export type Plan = {
     value: number;
 }
 
+export type Subscription = {
+    blockHeight: number;
+    cancelled: boolean;
+    createdAt: string;
+    ghostId: string | null;
+    id: string;
+    interval: number;
+    ownerAddress: string;
+    subscriberAddress: string;
+    tokenAddress: string;
+    txHash: string;
+    updatedAt: string;
+    value: number;
+}
+
 export default function SubscriptionPlan(props: Props): ReactElement {
     const {plan} = props;
 
