@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cors, {CorsOptions} from "cors";
 import Web3 from "web3";
 import http from 'http';
-// import https from 'https';
+import https from 'https';
 import {recoverTypedSignature_v4} from "eth-sig-util";
 import {createProfile} from "../../util/message-params";
 import assert from "assert";
@@ -13,8 +13,6 @@ import fs from "fs";
 import JSZip from "jszip";
 import path from "path";
 import config from "../../util/config";
-// const privateKey = fs.readFileSync("./key.pem", 'utf8');
-// const certificate = fs.readFileSync("./cert.pem", 'utf8');
 
 const httpsPort = process.env.HTTPS_PORT || 11665;
 const port = process.env.PORT || 11664;
@@ -309,16 +307,20 @@ export default class HttpService extends GenericService {
 
     async start() {
         const httpServer = http.createServer(this.app);
-        // const httpsServer = https.createServer({
-        //     key: privateKey,
-        //     cert: certificate,
-        // }, this.app);
-        //
-        // httpsServer.listen(httpsPort);
         httpServer.listen(port);
-        // this.app.listen(port, () => {
-        //     console.log(`Web Server listening at ${port}...`);
-        // });
+
+        try {
+            const privateKey = fs.readFileSync("./key.pem", 'utf8');
+            const certificate = fs.readFileSync("./cert.pem", 'utf8');
+            const httpsServer = https.createServer({
+                key: privateKey,
+                cert: certificate,
+            }, this.app);
+
+            httpsServer.listen(httpsPort);
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 
