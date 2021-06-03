@@ -307,21 +307,21 @@ export default class HttpService extends GenericService {
 
     async start() {
         const httpServer = http.createServer(this.app);
-        const httpsServer = http.createServer(this.app);
+        // const httpsServer = http.createServer(this.app);
         httpServer.listen(port);
-        httpsServer.listen(httpsPort);
-        // try {
-        //     const privateKey = fs.readFileSync("./key.pem", 'utf8');
-        //     const certificate = fs.readFileSync("./cert.pem", 'utf8');
-        //     const httpsServer = https.createServer({
-        //         key: privateKey,
-        //         cert: certificate,
-        //     }, this.app);
-        //
-        //     httpsServer.listen(httpsPort);
-        // } catch (e) {
-        //     console.log(e);
-        // }
+        // httpsServer.listen(httpsPort);
+        try {
+            const privateKey = fs.readFileSync("./key.pem", 'utf8');
+            const certificate = fs.readFileSync("./cert.pem", 'utf8');
+            const httpsServer = https.createServer({
+                key: privateKey,
+                cert: certificate,
+            }, this.app);
+
+            httpsServer.listen(httpsPort);
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 
