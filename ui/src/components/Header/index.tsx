@@ -11,7 +11,7 @@ export default function Header(): ReactElement {
         <>
             <div className="header">
                 <div className="header__body">
-                    <div className="header__logo">Ethereum Ghost</div>
+                    <div className="header__logo">Ghost Ethereum</div>
                     <div className="header__content">
                         {
                             (!!web3 && networkType !== 'rinkeby') && (
